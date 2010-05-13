@@ -1,0 +1,4 @@
+19.04.2010 the first commit
+20.04.2010 add the ack method
+28.04.2010 add properties header 
+12.05.2010 refactoring, add AMQPBase::setName()
