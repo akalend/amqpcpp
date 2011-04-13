@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include "strings.h"
 
 #include <stdint.h>
 
@@ -50,6 +51,8 @@
 
 //export AMQP; 
 using namespace std;
+
+typedef void (*voidF)();
 
 enum AMQPEvents_e {
 	AMQP_MESSAGE, AMQP_SIGUSR, AMQP_CANCEL, AMQP_CLOSE_CHANNEL
@@ -203,7 +206,7 @@ class AMQPQueue : public AMQPBase  {
 		void setConsumerTag(const char * consumer_tag);
 		amqp_bytes_t getConsumerTag();
 		
-		void addEvent( AMQPEvents_e eventType, void * event );
+		void addEvent( AMQPEvents_e eventType, voidF event );
 				
 		~AMQPQueue();
 
