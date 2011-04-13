@@ -26,23 +26,23 @@ AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum) {
 		this->cnn = cnn;
 		this->channelNum = channelNum;
 
-//		std::cout << "AMQPQueue()\n";;				
+//		std::cout << "AMQPQueue()\n";;
 		consumer_tag.bytes=NULL;
 		consumer_tag.len=0;
-		delivery_tag =0;	
+		delivery_tag =0;
 		pmessage=NULL;
 		openChannel();
-}	
+}
 
 AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum, string name) {
 		this->cnn = cnn;
 		this->channelNum = channelNum;
 		this->name = name;
-		
+
 		consumer_tag.bytes=NULL;
 		consumer_tag.len=0;
 		delivery_tag =0;
-		pmessage=NULL;				
+		pmessage=NULL;
 		openChannel();
 }
 
@@ -52,7 +52,7 @@ AMQPQueue::~AMQPQueue() {
 	if (pmessage)
 		delete pmessage;
 }
-	
+
 // Declare command /* 50, 10; 3276810 */
 
 void AMQPQueue::Declare() {
@@ -92,7 +92,7 @@ void AMQPQueue::sendDeclareCommand() {
 
 	if (!name.size())
 		throw AMQPException("the queue must to have the name");
-		
+
 	amqp_bytes_t queue_name = amqp_cstring_bytes(name.c_str());
 
 /*
@@ -102,8 +102,8 @@ void AMQPQueue::sendDeclareCommand() {
 */
 	amqp_table_t args;
 	args.num_entries = 0;
-	args.entries = NULL;  
-											  
+	args.entries = NULL;
+
 	amqp_boolean_t exclusive =	(parms & AMQP_EXCLUSIVE)	? 1:0;
 	amqp_boolean_t passive =	(parms & AMQP_PASSIVE)		? 1:0;
 	amqp_boolean_t autodelete = (parms & AMQP_AUTODELETE)	? 1:0;
@@ -121,25 +121,25 @@ void AMQPQueue::sendDeclareCommand() {
 		s.arguments = args;
 
 //	cout<< "start Declare\n";
-	amqp_method_number_t method_ok = AMQP_QUEUE_DECLARE_OK_METHOD; 
-			
-	amqp_rpc_reply_t res = amqp_simple_rpc(*cnn, channelNum, 
-			AMQP_QUEUE_DECLARE_METHOD, 
+	amqp_method_number_t method_ok = AMQP_QUEUE_DECLARE_OK_METHOD;
+
+	amqp_rpc_reply_t res = amqp_simple_rpc(*cnn, channelNum,
+			AMQP_QUEUE_DECLARE_METHOD,
 			&method_ok , &s);
 	AMQPBase::checkReply(&res);
 	amqp_release_buffers(*cnn);
 	char error_message [256];
 	bzero(error_message,256);
 
-	
+
 		if ( res.reply_type == AMQP_RESPONSE_NONE) {
-			throw AMQPException("error the QUEUE.DECLARE command, response none");		
+			throw AMQPException("error the QUEUE.DECLARE command, response none");
 		}
-		
+
 		if ( res.reply.id == AMQP_CHANNEL_CLOSE_METHOD ) {
 
 			amqp_channel_close_t * err = (amqp_channel_close_t *) res.reply.decoded;
-			
+
 			int c_id = 	(int) err->class_id;
 			sprintf( error_message, "server error %d, message '%s' class=%d method=%d ", err->reply_code, err->reply_text.bytes, c_id,err->method_id);
 //			cout << "****** "<< error_message << endl;
@@ -150,22 +150,22 @@ void AMQPQueue::sendDeclareCommand() {
 
 				amqp_queue_declare_ok_t* data = (amqp_queue_declare_ok_t*) res.reply.decoded;
 				count = data->message_count;
-				
+
 
 		} else {
 			sprintf( error_message, "error the Declare command  receive method=%d", res.reply.id);
 			throw AMQPException(error_message );
 		}
-			
+
 }
 
 // Delete command  /* 50, 40; 3276840 */
 
 void AMQPQueue::Delete() {
-	
+
 	if (!name.size())
 			throw AMQPException::AMQPException("the name of queue not set");
-	
+
 	AMQPQueue::sendDeleteCommand();
 }
 
@@ -181,7 +181,7 @@ void AMQPQueue::Delete(string name) {
 
 
 void AMQPQueue::sendDeleteCommand(){
-	 
+
 	amqp_bytes_t queue = amqp_cstring_bytes(name.c_str());
 
 	amqp_queue_delete_t s;
@@ -190,13 +190,13 @@ void AMQPQueue::sendDeleteCommand(){
 		s.if_unused =	( AMQP_IFUNUSED & parms ) ? 1:0;
 		s.nowait =		( AMQP_NOWAIT & parms ) ? 1:0;
 
-	amqp_method_number_t method_ok = AMQP_QUEUE_DELETE_OK_METHOD; 
-			
-	amqp_rpc_reply_t res = amqp_simple_rpc(*cnn, channelNum, 
-			AMQP_QUEUE_DELETE_METHOD, 
+	amqp_method_number_t method_ok = AMQP_QUEUE_DELETE_OK_METHOD;
+
+	amqp_rpc_reply_t res = amqp_simple_rpc(*cnn, channelNum,
+			AMQP_QUEUE_DELETE_METHOD,
 			&method_ok , &s);
-	
-	AMQPBase::checkReply(&res);			
+
+	AMQPBase::checkReply(&res);
 }
 
 
@@ -204,10 +204,10 @@ void AMQPQueue::sendDeleteCommand(){
 
 
 void AMQPQueue::Purge() {
-	
+
 	if (!name.size())
 			throw AMQPException::AMQPException("the name of queue not set");
-	
+
 	AMQPQueue::sendPurgeCommand();
 }
 
@@ -223,7 +223,7 @@ void AMQPQueue::Purge(string name) {
 
 
 void AMQPQueue::sendPurgeCommand(){
-	 
+
 	amqp_bytes_t queue = amqp_cstring_bytes(name.c_str());
 
 	amqp_queue_delete_t s;
@@ -231,13 +231,13 @@ void AMQPQueue::sendPurgeCommand(){
 		s.queue = queue;
 		s.nowait = ( AMQP_NOWAIT & parms ) ? 1:0;
 
-	amqp_method_number_t method_ok = AMQP_QUEUE_PURGE_OK_METHOD; 
-			
-	amqp_rpc_reply_t res = amqp_simple_rpc(*cnn, channelNum, 
-			AMQP_QUEUE_PURGE_METHOD, 
+	amqp_method_number_t method_ok = AMQP_QUEUE_PURGE_OK_METHOD;
+
+	amqp_rpc_reply_t res = amqp_simple_rpc(*cnn, channelNum,
+			AMQP_QUEUE_PURGE_METHOD,
 			&method_ok , &s);
-	
-	AMQPBase::checkReply(&res);		
+
+	AMQPBase::checkReply(&res);
 }
 
 
@@ -260,11 +260,11 @@ void AMQPQueue::Bind(string name, string key) {
 }
 
 void AMQPQueue::sendBindCommand(const char * exchange, const char * key){
-	 
+
 	amqp_bytes_t queueByte = amqp_cstring_bytes(name.c_str());
 	amqp_bytes_t exchangeByte = amqp_cstring_bytes(exchange);
 	amqp_bytes_t keyByte = amqp_cstring_bytes(key);
-	
+
     amqp_queue_bind_t s;
 		s.ticket = 0;
 		s.queue = queueByte;
@@ -274,7 +274,7 @@ void AMQPQueue::sendBindCommand(const char * exchange, const char * key){
 		s.arguments.num_entries = 0;
 		s.arguments.entries = NULL;
 
-	
+
 	amqp_method_number_t method_ok = AMQP_QUEUE_BIND_OK_METHOD;
     amqp_rpc_reply_t res = amqp_simple_rpc( *cnn,
 					channelNum,
@@ -282,7 +282,7 @@ void AMQPQueue::sendBindCommand(const char * exchange, const char * key){
 					&method_ok, &s);
 
 	AMQPBase::checkReply(&res);
-	
+
 }
 
 
@@ -305,11 +305,11 @@ void AMQPQueue::unBind(string name, string key) {
 }
 
 void AMQPQueue::sendUnBindCommand(const char * exchange, const char * key){
-	 
+
 	amqp_bytes_t queueByte = amqp_cstring_bytes(name.c_str());
 	amqp_bytes_t exchangeByte = amqp_cstring_bytes(exchange);
 	amqp_bytes_t keyByte = amqp_cstring_bytes(key);
-	
+
     amqp_queue_bind_t s;
 		s.ticket = 0;
 		s.queue = queueByte;
@@ -319,7 +319,7 @@ void AMQPQueue::sendUnBindCommand(const char * exchange, const char * key){
 		s.arguments.num_entries = 0;
 		s.arguments.entries = NULL;
 
-	
+
 	amqp_method_number_t method_ok = AMQP_QUEUE_UNBIND_OK_METHOD;
     amqp_rpc_reply_t res = amqp_simple_rpc( *cnn,
 					channelNum,
@@ -327,7 +327,7 @@ void AMQPQueue::sendUnBindCommand(const char * exchange, const char * key){
 					&method_ok, &s);
 
 	AMQPBase::checkReply(&res);
-	
+
 }
 
 
@@ -346,8 +346,8 @@ void AMQPQueue::Get(short parms) {
 void AMQPQueue::sendGetCommand() {
 
 	amqp_bytes_t queueByte = amqp_cstring_bytes(name.c_str());
-	
-    amqp_basic_get_t s;	
+
+    amqp_basic_get_t s;
 		s.ticket = 0;
 		s.queue = queueByte;
 		s.no_ack = ( AMQP_NOACK & parms ) ? 1:0;
@@ -357,9 +357,9 @@ void AMQPQueue::sendGetCommand() {
 					 AMQP_CONNECTION_CLOSE_METHOD,
 				     0 };
 
-	 amqp_rpc_reply_t res = 
-     AMQP_MULTIPLE_RESPONSE_RPC( *cnn, 
-					channelNum, 
+	 amqp_rpc_reply_t res =
+     AMQP_MULTIPLE_RESPONSE_RPC( *cnn,
+					channelNum,
 					BASIC,GET,
 					replies,
 			        amqp_basic_get_t,
@@ -373,25 +373,25 @@ void AMQPQueue::sendGetCommand() {
 
 		char error_message [256];
 		amqp_frame_t frame;
-	
+
 
 	amqp_release_buffers(*cnn);
-	
-	
+
+
 	if (pmessage)
 		delete(pmessage);
-		
+
 	pmessage = new AMQPMessage(this);
-	
+
 		if ( res.reply_type == AMQP_RESPONSE_NONE) {
-			throw AMQPException("error the Get command, response none");		
+			throw AMQPException("error the Get command, response none");
 		}
-		
+
 		if ( res.reply.id == AMQP_CHANNEL_CLOSE_METHOD ) {
-			
+
 
 			amqp_channel_close_t * err = (amqp_channel_close_t *) res.reply.decoded;
-			
+
 			int c_id = 	(int) err->class_id;
 			sprintf( error_message, "server error %d, message '%s' class=%d method=%d ", err->reply_code, err->reply_text.bytes, c_id,err->method_id);
 //			cout << "****** "<< error_message << endl;
@@ -400,78 +400,78 @@ void AMQPQueue::sendGetCommand() {
 			throw AMQPException( &res);
 		} if (res.reply.id == AMQP_BASIC_GET_EMPTY_METHOD) {
 			pmessage->setMessageCount(-1);
-			return;		
+			return;
 		} if (res.reply.id == AMQP_BASIC_GET_OK_METHOD) {
 
 				amqp_basic_get_ok_t* data = (amqp_basic_get_ok_t*) res.reply.decoded;
-				
+
 				delivery_tag = data->delivery_tag;
 				pmessage->setDeliveryTag(data->delivery_tag);
 
-				amqp_bytes_t exName = data->exchange;			
-				
+				amqp_bytes_t exName = data->exchange;
+
 				char * dst = (char *) malloc(exName.len+1);
 				strncpy(dst, (const char *)exName.bytes, exName.len  );
 				*(dst+exName.len) = '\0';
-				pmessage->setExchange(dst);	
+				pmessage->setExchange(dst);
 				free(dst);
-				
-				amqp_bytes_t routingKey = data->routing_key;			
-				
+
+				amqp_bytes_t routingKey = data->routing_key;
+
 				dst = (char *) malloc(routingKey.len+1);
 				strncpy(dst, (const char *)routingKey.bytes, routingKey.len);
 				*(dst+routingKey.len) = '\0';
-				pmessage->setRoutingKey(dst);	
+				pmessage->setRoutingKey(dst);
 				free(dst);
-								
-				pmessage->setMessageCount(data->message_count);	
-				
+
+				pmessage->setMessageCount(data->message_count);
+
 
 		} else {
 			sprintf( error_message, "error the Get command  receive method=%d", res.reply.id);
 			throw AMQPException(error_message );
 		}
-	
+
 	int result;
 	size_t len=0;
 	char * tmp = NULL;
 	char * old_tmp = NULL;
-		
-	while (1){ // receive  frames: 
+
+	while (1){ // receive  frames:
 		amqp_maybe_release_buffers(*cnn);
 		result = amqp_simple_wait_frame(*cnn, &frame);
-		if (result <= 0) 
+		if (result <= 0)
 					throw AMQPException(" read frame error");
 
 		if (frame.frame_type == AMQP_FRAME_HEADER){
 			//cout << "----  AMQP_FRAME_HEADER   --------\n";
-				amqp_basic_properties_t * p = (amqp_basic_properties_t *) frame.payload.properties.decoded;		
+				amqp_basic_properties_t * p = (amqp_basic_properties_t *) frame.payload.properties.decoded;
 				AMQPQueue::setHeaders(p);
 				continue;
-		}	   
+		}
 
 		if (frame.frame_type == AMQP_FRAME_BODY){
-		
+
 //			cout << "----  AMQP_FRAME_BODY   --------\n";
-			
-			uint32_t frame_len = frame.payload.body_fragment.len;	
-			
+
+			uint32_t frame_len = frame.payload.body_fragment.len;
+
 			size_t old_len = len;
 			len += frame_len;
-			
+
 			if ( tmp ) {
 				old_tmp = tmp;
-//				cout << "msg len ="<< len << endl;					
+//				cout << "msg len ="<< len << endl;
 				tmp = (char*) malloc(len+1);
 				if (!tmp) {
 						throw AMQPException("the can't allocae object");
 				}
-					
+
 				memcpy( tmp, old_tmp, old_len );
 				free(old_tmp);
 				memcpy(tmp + old_len,frame.payload.body_fragment.bytes, frame_len);
 				*(tmp+frame_len+old_len) = '\0';
-			
+
 			} else { // the first allocate
 				tmp = (char*) malloc(frame_len+1);
 				if (!tmp) {
@@ -481,17 +481,17 @@ void AMQPQueue::sendGetCommand() {
 				*(tmp+frame_len) = '\0';
 			}
 
-			if ( frame_len < FRAME_MAX - HEADER_FOOTER_SIZE) 
+			if ( frame_len < FRAME_MAX - HEADER_FOOTER_SIZE)
 					break;
 
 			continue;
-		}	   
-		
+		}
+
 	} // end while
 
-	
+
 	if (tmp) {
-		pmessage->setMessage(tmp);	
+		pmessage->setMessage(tmp);
 		free(tmp);
 	}
 	amqp_release_buffers(*cnn);
@@ -501,7 +501,7 @@ void AMQPQueue::sendGetCommand() {
 void AMQPQueue::addEvent( AMQPEvents_e eventType, voidF event ) {
 	if (events.find(eventType) != events.end())
 		throw AMQPException("the event alredy added");
-		
+
 	events[eventType]= reinterpret_cast<   int(*)( AMQPMessage * )  > (event);
 }
 
@@ -531,44 +531,44 @@ void AMQPQueue::sendConsumeCommand() {
 	amqp_bytes_t queueByte = amqp_cstring_bytes(name.c_str());
 
 	char error_message[256];
-	 /* 
-	amqp_basic_consume_ok_t * res = 
-			amqp_basic_consume( *cnn, 
-						channelNum, 
+	 /*
+	amqp_basic_consume_ok_t * res =
+			amqp_basic_consume( *cnn,
+						channelNum,
 					   queueByte,
 					   consumer_tag,
 					    0, //amqp_boolean_t no_local,
 					    1, // amqp_boolean_t no_ack,
 					    0 ); //amqp_boolean_t exclusive
 	*/
-	
+
 	  amqp_method_number_t replies[] = { AMQP_BASIC_CONSUME_OK_METHOD,
 					AMQP_CONNECTION_CLOSE_METHOD,
 					AMQP_BASIC_CANCEL_OK_METHOD,
 					0 };
-					 
-	 amqp_rpc_reply_t res = 
-     AMQP_MULTIPLE_RESPONSE_RPC( *cnn, 
-					channelNum, 
+
+	 amqp_rpc_reply_t res =
+     AMQP_MULTIPLE_RESPONSE_RPC( *cnn,
+					channelNum,
 					BASIC,CONSUME,
 					replies,
 			        amqp_basic_consume_t,
 			        channelNum,
 					queueByte,
-					consumer_tag, 
+					consumer_tag,
 					( AMQP_NOLOCAL & parms ) ? 1:0, //no_local,
-					( AMQP_NOACK & parms ) ? 1:0, //no_ack, 
+					( AMQP_NOACK & parms ) ? 1:0, //no_ack,
 					( AMQP_EXCLUSIVE & parms ) ? 1:0);
-	
-	
+
+
 		if ( res.reply_type == AMQP_RESPONSE_NONE) {
-			throw AMQPException("error the Consume command, response none");		
+			throw AMQPException("error the Consume command, response none");
 		}
-		
+
 		if ( res.reply.id == AMQP_CHANNEL_CLOSE_METHOD ) {
-			
+
 			amqp_channel_close_t * err = (amqp_channel_close_t *) res.reply.decoded;
-			
+
 			int c_id = 	(int) err->class_id;
 			sprintf( error_message, "server error %d, message '%s' class=%d method=%d ", err->reply_code, err->reply_text.bytes, c_id,err->method_id);
 			opened=0;
@@ -577,38 +577,38 @@ void AMQPQueue::sendConsumeCommand() {
 		} if (res.reply.id == AMQP_BASIC_CANCEL_OK_METHOD) {
 			//printf("****** cancel Ok \n");
 			return;
-		} if (res.reply.id == AMQP_BASIC_CONSUME_OK_METHOD) {					
+		} if (res.reply.id == AMQP_BASIC_CONSUME_OK_METHOD) {
 			consume_ok = (amqp_basic_consume_ok_t*) res.reply.decoded;
 			//printf("****** consume Ok c_tag=%s", consume_ok->consumer_tag.bytes );
 
 		}
-	
-	
+
+
 	auto_ptr<AMQPMessage> message ( new AMQPMessage(this) );
 	pmessage = message.get();
-	
+
 	amqp_frame_t frame;
-	char * buf=NULL, *pbuf = NULL; 
-																
+	char * buf=NULL, *pbuf = NULL;
+
 	size_t body_received;
 	size_t body_target;
-		
+
 	while(1) {
 
 	   amqp_maybe_release_buffers(*cnn);
 	   int result = amqp_simple_wait_frame(*cnn, &frame);
 		if (result <= 0) return;
 
-		//printf("frame method.id=%d  frame.frame_type=%d\n",frame.payload.method.id, frame.frame_type);		
-					
+		//printf("frame method.id=%d  frame.frame_type=%d\n",frame.payload.method.id, frame.frame_type);
+
 		if (frame.frame_type != AMQP_FRAME_METHOD){
 //			cout << "continue  method.id="<< frame.payload.method.id << " ";
 //			cout << "frame.frame_type="<< frame.frame_type << endl;
 			continue;
 		}
-	   
+
 		if (frame.payload.method.id == AMQP_BASIC_CANCEL_OK_METHOD){
-//			cout << "CANCEL OK method.id="<< frame.payload.method.id << endl;					
+//			cout << "CANCEL OK method.id="<< frame.payload.method.id << endl;
 			if ( events.find(AMQP_CANCEL) != events.end() ) {
 				(*events[AMQP_CANCEL])(pmessage);
 			}
@@ -617,80 +617,80 @@ void AMQPQueue::sendConsumeCommand() {
 
 
 		if (frame.payload.method.id != AMQP_BASIC_DELIVER_METHOD){
-//			cout << "NON BASIC_DELIVER_METHOD continue  method.id="<< frame.payload.method.id << endl;					
+//			cout << "NON BASIC_DELIVER_METHOD continue  method.id="<< frame.payload.method.id << endl;
 			continue;
 		}
-	   
+
 		amqp_basic_deliver_t * delivery = (amqp_basic_deliver_t*) frame.payload.method.decoded;
-		
+
 		delivery_tag = delivery->delivery_tag;
 		pmessage->setConsumerTag(delivery->consumer_tag);
 		pmessage->setDeliveryTag(delivery->delivery_tag);
 
 		pmessage->setExchange(delivery->exchange);
 		pmessage->setRoutingKey(delivery->routing_key);
-			
-					
+
+
 		result = amqp_simple_wait_frame(*cnn, &frame);
 		if (result <= 0) {
 			throw AMQPException("The returned read frame is invalid");
 			return;
 		}
-		
-	// redelivered=false,exchange=e,routing-key=		
-		
+
+	// redelivered=false,exchange=e,routing-key=
+
 		if (frame.frame_type != AMQP_FRAME_HEADER) {
 			throw AMQPException("The returned frame type is invalid");
             return;
 		}
-	
+
 		amqp_basic_properties_t * p = (amqp_basic_properties_t *) frame.payload.properties.decoded;
-		
+
 		AMQPQueue::setHeaders(p);
 
 		body_target = frame.payload.properties.body_size;
 		body_received = 0;
-	   
+
 	    buf = (char*) malloc(body_target+1);
 		*(buf+body_target)='\0';
 	    pbuf = buf;
-		
+
 		while (body_received < body_target) {
 		  result = amqp_simple_wait_frame(*cnn, &frame);
 		  if (result <= 0) break;
 
 			//printf("frame.frame_type=%d\n", frame.frame_type);
-	
-	
+
+
 		  if (frame.frame_type != AMQP_FRAME_BODY) {
 				throw AMQPException("The returned frame has no body");
               return;
 		  }
-		  		  
+
 		  body_received += frame.payload.body_fragment.len;
-		  
+
 		  memcpy( pbuf, frame.payload.body_fragment.bytes, frame.payload.body_fragment.len);
 		  pbuf += frame.payload.body_fragment.len;
 
-		} // end while 
-	   
-		pmessage->setMessage(buf);	   
+		} // end while
+
+		pmessage->setMessage(buf);
 		free(buf);
-		
+
 		if ( events.find(AMQP_MESSAGE) != events.end() ) {
 			int res = (int)(*events[AMQP_MESSAGE])(pmessage);
 //			cout << "res="<<res<<endl;
 			if (res) break;
 		}
 	}
-	
+
 }
 
 void AMQPQueue::setHeaders(amqp_basic_properties_t * p) {
-		if (pmessage == NULL) 
+		if (pmessage == NULL)
 			return;
-			
-		if (p->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG) {			
+
+		if (p->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG) {
 			pmessage->addHeader("Content-type", &p->content_type );
 		}
 
@@ -698,15 +698,15 @@ void AMQPQueue::setHeaders(amqp_basic_properties_t * p) {
 			pmessage->addHeader("Content-encoding", &p->content_encoding );
 		}
 
-	
+
 		if (p->_flags & AMQP_BASIC_DELIVERY_MODE_FLAG) {
 			pmessage->addHeader("Delivery-mode", &p->delivery_mode );
 		}
-			
+
 		if (p->_flags & AMQP_BASIC_MESSAGE_ID_FLAG) {
 			pmessage->addHeader("message_id", &p->message_id );
 		}
-		
+
 		if (p->_flags & AMQP_BASIC_USER_ID_FLAG) {
 			pmessage->addHeader("user_id", &p->user_id );
 		}
@@ -718,7 +718,7 @@ void AMQPQueue::setHeaders(amqp_basic_properties_t * p) {
 		if (p->_flags & AMQP_BASIC_CLUSTER_ID_FLAG) {
 			pmessage->addHeader("cluster_id", &p->cluster_id );
 		}
-	
+
 		if (p->_flags & AMQP_BASIC_CORRELATION_ID_FLAG) {
 			pmessage->addHeader("correlation_id", &p->correlation_id );
 		}
@@ -734,11 +734,11 @@ void AMQPQueue::setHeaders(amqp_basic_properties_t * p) {
 		if (p->_flags & AMQP_BASIC_EXPIRATION_FLAG) {
 			pmessage->addHeader("Expiration", &p->expiration );
 		}
-		
+
 		if (p->_flags & AMQP_BASIC_TYPE_FLAG) {
 			pmessage->addHeader("type", &p->type);
 		}
-		
+
 		if (p->_flags & AMQP_BASIC_REPLY_TO_FLAG) {
 			pmessage->addHeader("Reply-to", &p->reply_to);
 		}
@@ -757,7 +757,7 @@ void AMQPQueue::Cancel(const char * consumer_tag){
 
 void AMQPQueue::Cancel(amqp_bytes_t consumer_tag){
 	this->consumer_tag.len = consumer_tag.len;
-	this->consumer_tag.bytes = consumer_tag.bytes;	
+	this->consumer_tag.bytes = consumer_tag.bytes;
 	AMQPQueue::sendCancelCommand();
 }
 
@@ -771,7 +771,7 @@ void AMQPQueue::sendCancelCommand(){
 	amqp_send_method( *cnn,
 			channelNum,
 			AMQP_BASIC_CANCEL_METHOD,
-			&s);	
+			&s);
 }
 
 amqp_bytes_t AMQPQueue::getConsumerTag() {
@@ -787,7 +787,7 @@ void AMQPQueue::Ack() {
 
 void AMQPQueue::Ack(uint32_t delivery_tag) {
 	this->delivery_tag=delivery_tag;
-	
+
 	sendAckCommand();
 }
 

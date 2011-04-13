@@ -5,13 +5,13 @@ lib:
 	ar rcs libamqpcpp.a *o
 
 example_publish:
-	g++ -o example_publish  -lamqpcpp -lrabbitmq    -Iamqpcpp -I/usr/local/include -L/usr/local/lib  -L.  example_publish.cpp
+	g++ -o example_publish example_publish.cpp -lamqpcpp -lrabbitmq -Iamqpcpp -I/usr/local/include -L/usr/local/lib -L.  
 
 example_consume:
-	g++ -o example_consume  -lamqpcpp -lrabbitmq    -Iamqpcpp -I/usr/local/include -L/usr/local/lib  -L.  example_consume.cpp
+	g++ -o example_consume example_consume.cpp -lamqpcpp -lrabbitmq -Iamqpcpp -I/usr/local/include -L/usr/local/lib -L.  
 
 example_get:
-	g++ -o example_get  -lamqpcpp -lrabbitmq    -Iamqpcpp -I/usr/local/include -L/usr/local/lib  -L.  example_get.cpp
+	g++ -o example_get     example_get.cpp     -lamqpcpp -lrabbitmq -Iamqpcpp -I/usr/local/include -L/usr/local/lib -L.  
 
 clean:
 	rm *o
