@@ -1,17 +1,12 @@
 /*
  *  AMQPMessage.cpp
- *  rabbitmq++
+ *  librabbitmq++
  *
  *  Created by Alexandre Kalendarev on 15.04.10.
  *
  */
 
-#include <iostream>
-#include <string>
-
-using namespace std;
-
-#include "amqpcpp.h"
+#include "AMQPcpp.h"
 
 AMQPMessage::AMQPMessage( AMQPQueue * queue ) {
 	this->queue=queue;

@@ -1,6 +1,4 @@
-
-#include "amqpcpp.h"
-#include <iostream>
+#include "AMQPcpp.h"
 
 int main () {
 
