@@ -11,6 +11,15 @@
 
 #include "amqpcpp.h"
 
+#define AMQP_EXPAND_METHOD(classname, methodname) (AMQP_ ## classname ## _ ## methodname ## _METHOD)
+#define AMQP_MULTIPLE_RESPONSE_RPC(state, channel, classname, requestname, replynames, structname, ...) \
+({structname _simple_rpc_request___ = (structname) { __VA_ARGS__ };\
+amqp_simple_rpc(state, channel,\
+		AMQP_EXPAND_METHOD(classname, requestname),\
+		replynames,\
+		&_simple_rpc_request___);\
+})
+
 using namespace std;
 
 AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum) {
@@ -101,16 +110,23 @@ void AMQPQueue::sendDeclareCommand() {
 	amqp_boolean_t durable =	(parms & AMQP_DURABLE)		? 1:0;
 
 	//state, channel, classname, requestname, replyname, structname,
+	amqp_queue_declare_t s;
+		s.ticket = 0;
+		s.queue = queue_name;
+		s.passive = passive;
+		s.durable = durable;
+		s.exclusive = exclusive;
+		s.auto_delete = autodelete;
+		s.nowait = 0;
+		s.arguments = args;
 
 //	cout<< "start Declare\n";
-	amqp_rpc_reply_t res = AMQP_SIMPLE_RPC(*cnn, 
-				channelNum,
-				QUEUE, DECLARE, DECLARE_OK,
-				amqp_queue_declare_t,
-				0,
-				queue_name, passive, durable, exclusive, autodelete, 0, 
-				args);
-	AMQPBase::checkReply(&res);		
+	amqp_method_number_t method_ok = AMQP_QUEUE_DECLARE_OK_METHOD; 
+			
+	amqp_rpc_reply_t res = amqp_simple_rpc(*cnn, channelNum, 
+			AMQP_QUEUE_DECLARE_METHOD, 
+			&method_ok , &s);
+	AMQPBase::checkReply(&res);
 	amqp_release_buffers(*cnn);
 	char error_message [256];
 	bzero(error_message,256);
@@ -340,11 +356,7 @@ void AMQPQueue::sendGetCommand() {
 				     AMQP_BASIC_GET_EMPTY_METHOD,
 					 AMQP_CONNECTION_CLOSE_METHOD,
 				     0 };
-					 
 
-
-
- 
 	 amqp_rpc_reply_t res = 
      AMQP_MULTIPLE_RESPONSE_RPC( *cnn, 
 					channelNum, 
@@ -486,7 +498,7 @@ void AMQPQueue::sendGetCommand() {
 //	cout << "end message\n";
 }
 
-void AMQPQueue::addEvent( AMQPEvents_e eventType, void * event ) {
+void AMQPQueue::addEvent( AMQPEvents_e eventType, voidF event ) {
 	if (events.find(eventType) != events.end())
 		throw AMQPException("the event alredy added");
 		

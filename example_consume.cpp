@@ -40,8 +40,8 @@ int main () {
 		qu2->Bind( "e", "");		
 
 		qu2->setConsumerTag("tag_123");
-		qu2->addEvent(AMQP_MESSAGE, (void*) onMessage );
-		qu2->addEvent(AMQP_CANCEL, (void*) onCancel );	
+		qu2->addEvent(AMQP_MESSAGE, (voidF) onMessage );
+		qu2->addEvent(AMQP_CANCEL, (voidF) onCancel );	
 
 		qu2->Consume(AMQP_NOACK);//
 			

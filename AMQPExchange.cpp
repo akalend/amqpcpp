@@ -17,7 +17,7 @@ AMQPExchange::AMQPExchange(amqp_connection_state_t * cnn, int channelNum) {
 		this->cnn = cnn;
 		this->channelNum = channelNum;
 
-//	std::cout << "AMQPQueue()\n";;				
+//	std::cout << "AMQPQueue()\n";
 		openChannel();
 }	
 
@@ -92,12 +92,12 @@ void AMQPExchange::sendDeclareCommand() {
 	amqp_boolean_t autodelete = (parms & AMQP_AUTODELETE)	? 1:0;
 	amqp_boolean_t durable =	(parms & AMQP_DURABLE)		? 1:0;
 		
-	amqp_exchange_declare(*cnn, (amqp_channel_t) 1, exchange, exchangetype, 
-		passive, durable, autodelete, args );
+	//amqp_exchange_declare(*cnn, (amqp_channel_t) 1, exchange, exchangetype, passive, durable, autodelete, args ); //for some reason rabbitmq-c doesn't have auto-delete now...
+	amqp_exchange_declare(*cnn, (amqp_channel_t) 1, exchange, exchangetype, passive, durable, args );
 		 
 	amqp_rpc_reply_t res =amqp_get_rpc_reply(*cnn);
 	
-	AMQPBase::checkReply(&res);		
+	AMQPBase::checkReply(&res);
 }
 
 void AMQPExchange::checkType() {

@@ -22,7 +22,7 @@ AMQPException::AMQPException( amqp_rpc_reply_t * res) {
 
 	if ( res->reply_type == AMQP_RESPONSE_LIBRARY_EXCEPTION) {	
 
-		this->message = res->library_errno ? strerror(res->library_errno) : "end-of-stream";	
+		this->message = res->library_error ? strerror(res->library_error) : "end-of-stream";	
 	} 
 	
 	if ( res->reply_type == AMQP_RESPONSE_SERVER_EXCEPTION) {	
