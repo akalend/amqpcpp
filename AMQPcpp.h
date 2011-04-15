@@ -6,7 +6,6 @@
  *
  */
 
-
 #ifndef __AMQPCPP
 #define __AMQPCPP
 
@@ -31,7 +30,7 @@
 #define AMQP_MULTIPLE		1024
 
 
-#define HEADER_FOOTER_SIZE 8 //  7 bytes up front, then payload, then 1 byte footer 
+#define HEADER_FOOTER_SIZE 8 //  7 bytes up front, then payload, then 1 byte footer
 #define FRAME_MAX 131072    // max lenght (size) of frame
 
 #include <cstdlib>
@@ -49,106 +48,102 @@
 #include <map>
 #include <memory>
 
-//export AMQP; 
+//export AMQP;
 using namespace std;
 
-typedef void (*voidF)();
+class AMQPQueue;
 
 enum AMQPEvents_e {
 	AMQP_MESSAGE, AMQP_SIGUSR, AMQP_CANCEL, AMQP_CLOSE_CHANNEL
 };
 
-
-
 class AMQPException {
-
 	string message;
 	int code;
-	public: 
-		AMQPException(const char * message);
-		AMQPException( amqp_rpc_reply_t * res );
-	
-		string getMessage();
-		uint16_t    getReplyCode();
+	public:
+		AMQPException(string message);
+		AMQPException(amqp_rpc_reply_t * res);
+
+		string   getMessage();
+		uint16_t getReplyCode();
 };
 
-class AMQPQueue;
+
 
 class AMQPMessage {
-	
+
 	char * data;
 	string exchange;
 	string routing_key;
 	uint32_t delivery_tag;
-	int message_count; 
+	int message_count;
 	string consumer_tag;
 	AMQPQueue * queue;
 	map<string,string> headers;
-	 
-	public :	
-		AMQPMessage(AMQPQueue * queue);		
+
+	public :
+		AMQPMessage(AMQPQueue * queue);
 		~AMQPMessage();
-		
-		void setMessage(char * data);
+
+		void setMessage(const char * data);
 		char * getMessage();
-		
-		void addHeader(char * name, amqp_bytes_t * value);
-		void addHeader(char * name, uint64_t * value);	
-		void addHeader(char * name, uint8_t * value);			
+
+		void addHeader(string name, amqp_bytes_t * value);
+		void addHeader(string name, uint64_t * value);
+		void addHeader(string name, uint8_t * value);
 		string getHeader(string name);
-		
+
 		void setConsumerTag( amqp_bytes_t consumer_tag);
 		void setConsumerTag( string consumer_tag);
-		string getConsumerTag();				
-		
-		void setMessageCount( int count);
+		string getConsumerTag();
+
+		void setMessageCount(int count);
 		int getMessageCount();
 
 		void setExchange(amqp_bytes_t exchange);
-		void setExchange(char * exchange);
+		void setExchange(string exchange);
 		string getExchange();
 
 		void setRoutingKey(amqp_bytes_t routing_key);
-		void setRoutingKey(char * routing_key);
+		void setRoutingKey(string routing_key);
 		string getRoutingKey();
-		
+
 		uint32_t getDeliveryTag();
 		void setDeliveryTag(uint32_t delivery_tag);
-		
+
 		AMQPQueue * getQueue();
-	
+
 };
 
 
 class AMQPBase {
-
 	protected:
 		string name;
 		short parms;
 		amqp_connection_state_t * cnn;
 		int channelNum;
 		AMQPMessage * pmessage;
-		
+
 		short opened;
-		
+
 		void checkReply(amqp_rpc_reply_t * res);
 		void checkClosed(amqp_rpc_reply_t * res);
-		void openChannel();		
-		
-		
-	public:	
-		~AMQPBase();		
+		void openChannel();
+
+
+	public:
+		~AMQPBase();
 		int getChannelNum();
 		void setParam(short param);
 		string getName();
 		void closeChannel();
 		void reopen();
 		void setName(const char * name);
-		void setName(string name);	
+		void setName(string name);
 };
 
 class AMQPQueue : public AMQPBase  {
-	protected:	
+	protected:
 		map< AMQPEvents_e, int(*)( AMQPMessage * ) > events;
 		amqp_bytes_t consumer_tag;
 		uint32_t delivery_tag;
@@ -159,27 +154,17 @@ class AMQPQueue : public AMQPBase  {
 
 		void Declare();
 		void Declare(string name);
-		void Declare(const char * name);
 		void Declare(string name, short parms);
-		void Declare(const char * name, short parms);
 
 		void Delete();
 		void Delete(string name);
-		void Delete(const char * name);
 
 		void Purge();
 		void Purge(string name);
-		void Purge(const char * name);
 
-		void Bind(string exchangeName, const char * key);
-		void Bind(const char * exchangeName , string key);
 		void Bind(string exchangeName, string key);
-		void Bind(const char * queueName , const char * key);
 
-		void unBind(string exchangeName, const char * key);
-		void unBind(const char * exchangeName , string key);
 		void unBind(string exchangeName, string key);
-		void unBind(const char * queueName , const char * key);
 
 		void Get();
 		void Get(short param);
@@ -188,26 +173,24 @@ class AMQPQueue : public AMQPBase  {
 		void Consume(short param);
 
 		void Cancel(amqp_bytes_t consumer_tag);
-		void Cancel(const char * consumer_tag);
 		void Cancel(string consumer_tag);
 
 		void Ack();
 		void Ack(uint32_t delivery_tag);
-		
+
 		AMQPMessage * getMessage() {
 			return pmessage;
 		}
-		
+
 		uint32_t getCount() {
 			return count;
 		}
-		
+
 		void setConsumerTag(string consumer_tag);
-		void setConsumerTag(const char * consumer_tag);
 		amqp_bytes_t getConsumerTag();
-		
-		void addEvent( AMQPEvents_e eventType, voidF event );
-				
+
+		void addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*) );
+
 		~AMQPQueue();
 
 	private:
@@ -221,66 +204,50 @@ class AMQPQueue : public AMQPBase  {
 		void sendCancelCommand();
 		void sendAckCommand();
 		void setHeaders(amqp_basic_properties_t * p);
-
 };
 
 
-class AMQPExchange : public AMQPBase {	
-	string type;		
+class AMQPExchange : public AMQPBase {
+	string type;
 	map<string,string> sHeaders;
 	map<string, int> iHeaders;
-	
-	public :
+
+	public:
 		AMQPExchange(amqp_connection_state_t * cnn, int channelNum);
 		AMQPExchange(amqp_connection_state_t * cnn, int channelNum, string name);
-		 
+
 		void Declare();
 		void Declare(string name);
-		void Declare(const char * name);
-		void Declare(string name, const char * type);		
-		void Declare(const char * name, const char * type);		
-		void Declare(string name, const char * type, short parms);		
-		void Declare(const char * name, const char * type, short parms);		
+		void Declare(string name, string type);
+		void Declare(string name, string type, short parms);
 
 		void Delete();
 		void Delete(string name);
-		void Delete(const char * name);
 
 		void Bind(string queueName);
-		void Bind(const char * queueName) ;
-		void Bind(string queueName, const char * key);
-		void Bind(const char * queueName , string key ) ;
 		void Bind(string queueName, string key);
-		void Bind(const char * queueName , const char * key ) ;
 
-		void Publish(const char * message, const char * key);
-		void Publish(string message, const char * key);
 		void Publish(string message, string key);
-		void Publish(const char * message, string key);
-				
-		void setHeader(const char * name, int value);
-		void setHeader(const char * name, const char * value);
-		void setHeader(const char * name, string value);
 
-	protected:
+		void setHeader(string name, int value);
+		void setHeader(string name, string value);
 
-	private:		
+	private:
 		AMQPExchange();
 		void checkType();
 		void sendDeclareCommand();
 		void sendDeleteCommand();
 		void sendPublishCommand();
-		
+
 		void sendBindCommand(const char * queueName, const char * key);
 		void sendPublishCommand(const char * message, const char * key);
 		void sendCommand();
 		void checkReply(amqp_rpc_reply_t * res);
 		void checkClosed(amqp_rpc_reply_t * res);
-			
+
 };
 
 class AMQP {
-
 	int port;
 	string host;
 	string vhost;
@@ -288,30 +255,27 @@ class AMQP {
 	string password;
 	int sockfd;
 	int channelNumber;
-	
+
 	amqp_connection_state_t cnn;
 	AMQPExchange * exchange;
 
 	vector<AMQPBase*> channels;
-				
+
 	public:
 		AMQP();
-		AMQP( string cnnStr);
-		AMQP(const char* cnnStr);
+		AMQP(string cnnStr);
 		~AMQP();
-						
+
 		AMQPExchange * createExchange();
 		AMQPExchange * createExchange(string name);
-		AMQPExchange * createExchange(const char * name);
 
 		AMQPQueue * createQueue();
 		AMQPQueue * createQueue(string name);
-		AMQPQueue * createQueue(const char * name);
 
 		void printConnect();
-		
+
 		void closeChannel();
-		
+
 	private:
 		//AMQP& operator =(AMQP &ob);
 		AMQP( AMQP &ob );
@@ -324,8 +288,6 @@ class AMQP {
 		void sockConnect();
 		void login();
 		//void chanalConnect();
-		
 };
 
-
-#endif
+#endif //__AMQPCPP
