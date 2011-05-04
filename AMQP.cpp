@@ -101,47 +101,38 @@ void AMQP::parseHostPort(string hostPortString ) {
 
 	int pos2 = hostPortString.find('/');
 
-	switch (pos) {
-		case -1:
-			port = AMQPPORT;
-			if ( pos2 == -1) {
-				vhost = AMQPVHOST;
-				host = hostPortString;
-			} else if (pos2 == 0) {
-				vhost = hostPortString.assign(hostPortString, 1, hostPortString.size()-1);
-				host = AMQPHOST;
-			} else {
-				vhost.assign(hostPortString, pos2+1, hostPortString.size()-pos2-1);
-				host.assign(hostPortString, 0, pos2);
-			}
-		break;
-		case 0:
-			host = AMQPHOST;
-			vhost = AMQPVHOST;
-			
-
-			if (pos2 == -1) {
-				portString.assign(hostPortString, 1, hostPortString.size()-1);
-				port = atoi( portString.c_str());
-			} else {
-				portString.assign(hostPortString, 1, pos2-1);
-				port = atoi(portString.c_str());
-				vhost.assign(hostPortString, pos2+1, hostPortString.size()-pos2);
-			}
-		break;
-		default:
-			if ( pos2 == -1 ) {
-				vhost = AMQPVHOST;
-				host = hostString.assign(hostPortString, 0, pos);
-				portString.assign(hostPortString, pos+1, hostPortString.size()-pos+1);
-			} else {
-				vhost.assign(hostPortString, pos2+1, hostPortString.size()-pos2-1);
-				host.assign(hostPortString, 0, pos);
-				portString.assign(hostPortString, pos+1, pos2-pos-1);
-			}
-			port = atoi(portString.c_str());
-		break;
-	}
+        host = AMQPHOST;
+        vhost = AMQPVHOST;
+        port = AMQPPORT;
+                
+        if (pos == string::npos) {
+                if ( pos2 == string::npos) {
+                        host = hostPortString;
+                } else {
+                        vhost.assign(hostPortString, pos2, hostPortString.size()-pos2);
+                        if (pos2 != 0) {
+                                host.assign(hostPortString, 0, pos2);
+                        }
+                }
+        } else if (pos == 0) {
+                if (pos2 == string::npos) {
+                        portString.assign(hostPortString, 1, hostPortString.size()-1);
+                } else {
+                        portString.assign(hostPortString, 1, pos2-1);
+                        vhost.assign(hostPortString, pos2, hostPortString.size()-pos2);
+                }
+                port = atoi(portString.c_str());
+        } else {
+                if ( pos2 == string::npos ) {
+                        host.assign(hostPortString, 0, pos);
+                        portString.assign(hostPortString, pos+1, hostPortString.size()-pos+1);
+                } else {
+                        vhost.assign(hostPortString, pos2, hostPortString.size()-pos2);
+                        host.assign(hostPortString, 0, pos);
+                        portString.assign(hostPortString, pos+1, pos2-pos-1);
+                }
+                port = atoi(portString.c_str());
+        }
 }
 
 void AMQP::connect() {
@@ -181,27 +172,28 @@ void AMQP::login() {
 AMQPExchange * AMQP::createExchange() {
 	channelNumber++;
 	AMQPExchange * exchange = new AMQPExchange(&cnn,channelNumber);
-	channels.push_back( reinterpret_cast<AMQPBase*>(exchange) );
+	channels.push_back( dynamic_cast<AMQPBase*>(exchange) );
 	return exchange;
 }
 
 AMQPExchange * AMQP::createExchange(string name) {
 	channelNumber++;
 	AMQPExchange * exchange = new AMQPExchange(&cnn,channelNumber,name);
-	channels.push_back( reinterpret_cast<AMQPBase*>(exchange) );
+	channels.push_back( dynamic_cast<AMQPBase*>(exchange) );
 	return exchange;
 }
 
 AMQPQueue * AMQP::createQueue() {
 	channelNumber++;
 	AMQPQueue * queue = new AMQPQueue(&cnn,channelNumber);
-	channels.push_back( reinterpret_cast<AMQPBase*>(queue) );
+	channels.push_back( dynamic_cast<AMQPBase*>(queue) );
 	return queue;
 }
 
 AMQPQueue * AMQP::createQueue(string name) {
-	AMQPQueue * queue = new AMQPQueue(&cnn,channelNumber++,name);
-	channels.push_back( reinterpret_cast<AMQPBase*>(queue) );
+        channelNumber++;
+	AMQPQueue * queue = new AMQPQueue(&cnn,channelNumber,name);
+	channels.push_back( dynamic_cast<AMQPBase*>(queue) );
 	return queue;
 }
 
