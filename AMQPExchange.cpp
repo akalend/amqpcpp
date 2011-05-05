@@ -26,27 +26,27 @@ AMQPExchange::AMQPExchange(amqp_connection_state_t * cnn, int channelNum, string
 //Declare
 
 void AMQPExchange::Declare() {
-	parms=0;
+	this->parms=0;
 	sendDeclareCommand();
 }
 
 void AMQPExchange::Declare(string name) {
-	parms=0;
-	name=name;
+	this->parms=0;
+	this->name=name;
 	sendDeclareCommand();
 }
 
 void AMQPExchange::Declare(string name, string type) {
-	parms=0;
-	name=name;
-	type=type;
+	this->parms=0;
+	this->name=name;
+	this->type=type;
 	sendDeclareCommand();
 }
 
 void AMQPExchange::Declare(string name, string type, short parms) {
-	name=name;
-	type=type;
-	parms=parms;
+	this->name=name;
+	this->type=type;
+	this->parms=parms;
 	sendDeclareCommand();
 }
 

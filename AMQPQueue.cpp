@@ -314,7 +314,7 @@ void AMQPQueue::sendGetCommand() {
 	while (1){ //receive frames...
 		amqp_maybe_release_buffers(*cnn);
 		result = amqp_simple_wait_frame(*cnn, &frame);
-		if (result <= 0)
+		if (result < 0)
 			throw AMQPException(" read frame error");
 
 		if (frame.frame_type == AMQP_FRAME_HEADER){
@@ -365,7 +365,7 @@ void AMQPQueue::sendGetCommand() {
 void AMQPQueue::addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*)) {
 	if (events.find(eventType) != events.end())
 		throw AMQPException("the event alredy added");
-	events[eventType]= reinterpret_cast< int(*)( AMQPMessage * ) > (event);
+	events[eventType] = reinterpret_cast< int(*)( AMQPMessage * ) > (event);
 }
 
 void AMQPQueue::Consume() {
