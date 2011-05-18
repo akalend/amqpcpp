@@ -1,19 +1,28 @@
-all: lib example_publish example_consume example_get
+CXX      = g++
+CFLAGS   = -I/export/home/michal.bojarski/usr/include -L/export/home/michal.bojarski/usr/lib -Wall
+CPPFLAGS = $(CFLAGS) -I/usr/local/include -L/usr/local/lib -Iinclude/
 
-lib:
-	gcc -c AMQPBase.cpp AMQPException.cpp AMQPMessage.cpp AMQP.cpp AMQPExchange.cpp AMQPQueue.cpp
-	ar rcs libamqpcpp.a *.o
+LIBRARIES= rabbitmq
+LIBS     = $(addprefix -l,$(LIBRARIES))
 
-example_publish:
-	g++ -o example_publish example_publish.cpp -lamqpcpp -lrabbitmq -Iamqpcpp -I/usr/local/include -L/usr/local/lib -L.  
+LIBNAME  = amqpcpp
+LIBFILE  = lib$(LIBNAME).a
 
-example_consume:
-	g++ -o example_consume example_consume.cpp -lamqpcpp -lrabbitmq -Iamqpcpp -I/usr/local/include -L/usr/local/lib -L.  
+SOURCES  = src/AMQP.cpp src/AMQPBase.cpp src/AMQPException.cpp src/AMQPMessage.cpp src/AMQPExchange.cpp src/AMQPQueue.cpp
+EXFILES  = example_publish.cpp example_consume.cpp example_get.cpp
+EXAMPLES = $(EXFILES:.cpp=)
+OBJECTS  = $(SOURCES:.cpp=.o)
 
-example_get:
-	g++ -o example_get     example_get.cpp     -lamqpcpp -lrabbitmq -Iamqpcpp -I/usr/local/include -L/usr/local/lib -L.  
+
+all: lib $(EXAMPLES)
+
+lib: $(LIBFILE)
+
+$(LIBFILE): $(OBJECTS)
+	$(AR) rcs $@ $(OBJECTS)
+
+$(EXAMPLES): $(addprefix examples/,$(EXFILES)) $(LIBFILE)
+	$(CXX) $(CPPFLAGS) -o $@ $< $(LIBFILE) $(LIBS)
 
 clean:
-	rm -f *.o
-	rm -f *.a
-	rm -f example_publish example_consume example_get
+	rm -f $(OBJECTS) $(EXAMPLES) $(LIBFILE)

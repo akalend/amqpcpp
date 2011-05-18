@@ -95,16 +95,16 @@ void AMQP::parseUserStr(string userString) {
 }
 
 void AMQP::parseHostPort(string hostPortString ) {
-	int pos = hostPortString.find(':');
+	size_t pos = hostPortString.find(':');
 	string hostString;
 	string portString;
 
-	int pos2 = hostPortString.find('/');
+	size_t pos2 = hostPortString.find('/');
 
-        host = AMQPHOST;
+        host  = AMQPHOST;
         vhost = AMQPVHOST;
-        port = AMQPPORT;
-                
+        port  = AMQPPORT;
+
         if (pos == string::npos) {
                 if ( pos2 == string::npos) {
                         host = hostPortString;

@@ -38,10 +38,11 @@
 #include <cstring>
 #include "strings.h"
 
+#include <unistd.h>
 #include <stdint.h>
 
-#include <amqp.h>
-#include <amqp_framing.h>
+#include "amqp.h"
+#include "amqp_framing.h"
 
 #include <iostream>
 #include <vector>

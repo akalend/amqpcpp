@@ -102,7 +102,7 @@ void AMQPQueue::sendDeclareCommand() {
 		amqp_channel_close_t * err = (amqp_channel_close_t *) res.reply.decoded;
 
 		int c_id = 	(int) err->class_id;
-		sprintf( error_message, "server error %d, message '%s' class=%d method=%d ", err->reply_code, err->reply_text.bytes, c_id,err->method_id);
+		sprintf( error_message, "server error %u, message '%s' class=%d method=%u ", err->reply_code, (char*)err->reply_text.bytes, c_id,err->method_id);
 		opened=0;
 
 		throw AMQPException(&res);
@@ -271,7 +271,7 @@ void AMQPQueue::sendGetCommand() {
 	if ( res.reply.id == AMQP_CHANNEL_CLOSE_METHOD ) {
 		amqp_channel_close_t * err = (amqp_channel_close_t *) res.reply.decoded;
 
-		sprintf( error_message, "server error %d, message '%s' class=%d method=%d ", err->reply_code, err->reply_text.bytes, (int)err->class_id, err->method_id);
+		sprintf( error_message, "server error %u, message '%s' class=%d method=%u ", err->reply_code, (char*)err->reply_text.bytes, (int)err->class_id, err->method_id);
 		opened=0;
 
 		throw AMQPException( &res);
@@ -418,7 +418,7 @@ void AMQPQueue::sendConsumeCommand() {
 		throw AMQPException("error the Consume command, response none");
 	} else if ( res.reply.id == AMQP_CHANNEL_CLOSE_METHOD ) {
 		amqp_channel_close_t * err = (amqp_channel_close_t *) res.reply.decoded;
-		sprintf( error_message, "server error %d, message '%s' class=%d method=%d ", err->reply_code, err->reply_text.bytes, (int)err->class_id, err->method_id);
+		sprintf( error_message, "server error %u, message '%s' class=%d method=%u ", err->reply_code, (char*)err->reply_text.bytes, (int)err->class_id, err->method_id);
 		opened=0;
 
 		throw AMQPException(error_message);
