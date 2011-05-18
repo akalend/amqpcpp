@@ -1,4 +1,3 @@
-
 #include "AMQPcpp.h"
 
 int main (int argc, char** argv) {
@@ -12,10 +11,7 @@ int main (int argc, char** argv) {
 		AMQP amqp("123123:akalend@localhost:5673/private");		// all connect string
 
 		AMQPExchange * ex = amqp.createExchange("e");
-		string t1 = "e";
-		string t2 = "fanout";
-		ex->Declare(t1,t2);
-		//ex->Declare("e", "fanout");
+		ex->Declare("e", "fanout");
 
 		AMQPQueue * qu2 = amqp.createQueue("q2");
 		qu2->Declare();
