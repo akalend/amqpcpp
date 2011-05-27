@@ -1,5 +1,5 @@
 CXX      = g++
-CFLAGS   = -I/export/home/michal.bojarski/usr/include -L/export/home/michal.bojarski/usr/lib -Wall
+CFLAGS   = -Wall
 CPPFLAGS = $(CFLAGS) -I/usr/local/include -L/usr/local/lib -Iinclude/
 
 LIBRARIES= rabbitmq
