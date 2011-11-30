@@ -15,7 +15,7 @@ AMQPBase::~AMQPBase() {
 void AMQPBase::checkReply(amqp_rpc_reply_t * res) {
 	checkClosed(res);
 	if (res->reply_type != AMQP_RESPONSE_NORMAL )
-	throw AMQPException::AMQPException(res);
+	throw AMQPException(res);
 }
 
 void AMQPBase::checkClosed(amqp_rpc_reply_t * res) {
@@ -27,7 +27,7 @@ void AMQPBase::openChannel() {
 	amqp_channel_open(*cnn, channelNum);
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(*cnn);
 	if ( res.reply_type != AMQP_RESPONSE_NORMAL)
-		throw AMQPException::AMQPException(&res);
+		throw AMQPException(&res);
 	opened=1;
 }
 
