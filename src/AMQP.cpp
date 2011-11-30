@@ -155,7 +155,7 @@ void AMQP::sockConnect() {
 	sockfd = amqp_open_socket(host.c_str(), port);
 
 	if (sockfd<0)
-		throw AMQPException::AMQPException("AMQP cannot create socket descriptor");
+		throw AMQPException("AMQP cannot create socket descriptor");
 
 	//cout << "sockfd="<< sockfd  << "  pid=" <<  getpid() <<endl;
 	amqp_set_sockfd(cnn, sockfd);
@@ -166,7 +166,7 @@ void AMQP::login() {
 	if ( res.reply_type == AMQP_RESPONSE_NORMAL)
 		return;
 
-	throw AMQPException::AMQPException(&res);
+	throw AMQPException(&res);
 }
 
 AMQPExchange * AMQP::createExchange() {
