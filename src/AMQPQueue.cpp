@@ -118,7 +118,7 @@ void AMQPQueue::sendDeclareCommand() {
 // Delete command  /* 50, 40; 3276840 */
 void AMQPQueue::Delete() {
 	if (!name.size())
-		throw AMQPException::AMQPException("the name of queue not set");
+		throw AMQPException("the name of queue not set");
 	sendDeleteCommand();
 }
 
@@ -146,7 +146,7 @@ void AMQPQueue::sendDeleteCommand() {
 // Purge command /* 50, 30; 3276830 */
 void AMQPQueue::Purge() {
 	if (!name.size())
-		throw AMQPException::AMQPException("the name of queue not set");
+		throw AMQPException("the name of queue not set");
 	sendPurgeCommand();
 }
 

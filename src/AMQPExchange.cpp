@@ -84,14 +84,14 @@ void AMQPExchange::checkType() {
 		isErr = 0;
 
 	if (isErr)
-		throw AMQPException::AMQPException("the type of AMQPExchange must be direct | fanout | topic" );
+		throw AMQPException("the type of AMQPExchange must be direct | fanout | topic" );
 }
 
 // Delete
 
 void AMQPExchange::Delete() {
 	if (!name.size())
-		throw AMQPException::AMQPException("the name of exchange not set");
+		throw AMQPException("the name of exchange not set");
 
 	sendDeleteCommand();
 }
@@ -126,7 +126,7 @@ void AMQPExchange::sendDeleteCommand(){
 
 void AMQPExchange::Bind(string name) {
 	if (type != "fanout")
-		throw AMQPException::AMQPException("key is NULL, this using only for the type fanout" );
+		throw AMQPException("key is NULL, this using only for the type fanout" );
 
 	sendBindCommand(name.c_str(), NULL );
 }
