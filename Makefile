@@ -22,7 +22,7 @@ $(LIBFILE): $(OBJECTS)
 	$(AR) rcs $@ $(OBJECTS)
 
 $(EXAMPLES): $(addprefix examples/,$(EXFILES)) $(LIBFILE)
-	$(CXX) $(CPPFLAGS) -o $@ $< $(LIBFILE) $(LIBS)
+	$(CXX) $(CPPFLAGS) -o $@ examples/$@.cpp $(LIBFILE) $(LIBS)
 
 clean:
 	rm -f $(OBJECTS) $(EXAMPLES) $(LIBFILE)
