@@ -344,7 +344,7 @@ void AMQPQueue::sendGetCommand() {
 				if (!tmp) {
 					throw AMQPException("can't reallocate object");
 				}
-				strncpy(tmp, (char*) frame.payload.body_fragment.bytes, frame_len);
+				memcpy(tmp, (char*) frame.payload.body_fragment.bytes, frame_len);
 				*(tmp+frame_len) = '\0';
 			}
 
@@ -356,7 +356,7 @@ void AMQPQueue::sendGetCommand() {
 	}
 
 	if (tmp) {
-		pmessage->setMessage(tmp);
+	        pmessage->setMessage(tmp,len);
 		free(tmp);
 	}
 	amqp_release_buffers(*cnn);
@@ -509,7 +509,7 @@ void AMQPQueue::sendConsumeCommand() {
 			pbuf += frame.payload.body_fragment.len;
 		}
 
-		pmessage->setMessage(buf);
+		pmessage->setMessage(buf,body_received);
 		free(buf);
 
 		if ( events.find(AMQP_MESSAGE) != events.end() ) {
