@@ -74,6 +74,7 @@ class AMQPException {
 class AMQPMessage {
 
 	char * data;
+	uint32_t len;
 	string exchange;
 	string routing_key;
 	uint32_t delivery_tag;
@@ -86,8 +87,8 @@ class AMQPMessage {
 		AMQPMessage(AMQPQueue * queue);
 		~AMQPMessage();
 
-		void setMessage(const char * data);
-		char * getMessage();
+		void setMessage(const char * data,uint32_t length);
+		char * getMessage(uint32_t* length);
 
 		void addHeader(string name, amqp_bytes_t * value);
 		void addHeader(string name, uint64_t * value);
