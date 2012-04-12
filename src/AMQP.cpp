@@ -154,8 +154,10 @@ void AMQP::sockConnect() {
 	cnn = amqp_new_connection();
 	sockfd = amqp_open_socket(host.c_str(), port);
 
-	if (sockfd<0)
+	if (sockfd<0){
+		amqp_destroy_connection(cnn);
 		throw AMQPException("AMQP cannot create socket descriptor");
+	}
 
 	//cout << "sockfd="<< sockfd  << "  pid=" <<  getpid() <<endl;
 	amqp_set_sockfd(cnn, sockfd);
