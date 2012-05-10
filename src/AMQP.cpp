@@ -168,6 +168,7 @@ void AMQP::login() {
 	if ( res.reply_type == AMQP_RESPONSE_NORMAL)
 		return;
 
+	amqp_destroy_connection(cnn);
 	throw AMQPException(&res);
 }
 
