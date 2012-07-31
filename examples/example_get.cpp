@@ -19,8 +19,8 @@ int main () {
 			
 			cout << "count: "<<  m->getMessageCount() << endl;											 
 			if (m->getMessageCount() > -1) {
-			
-			cout << "message\n"<< m->getMessage() << "\nmessage key: "<<  m->getRoutingKey() << endl;
+			uint32_t j = 0;
+			cout << "message\n"<< m->getMessage(&j) << "\nmessage key: "<<  m->getRoutingKey() << endl;
 			cout << "exchange: "<<  m->getExchange() << endl;											
 			cout << "Content-type: "<< m->getHeader("Content-type") << endl;	
 			cout << "Content-encoding: "<< m->getHeader("Content-encoding") << endl;	
