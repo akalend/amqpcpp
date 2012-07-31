@@ -411,6 +411,9 @@ void AMQPQueue::sendConsumeCommand() {
 		s.no_local = ( AMQP_NOLOCAL & parms ) ? 1:0;
 		s.no_ack = ( AMQP_NOACK & parms ) ? 1:0;
 		s.exclusive = ( AMQP_EXCLUSIVE & parms ) ? 1:0;
+		//add by chenyujian 20120731
+		//arguments should be initialized
+		s.arguments = amqp_empty_table;
 
 	amqp_rpc_reply_t res = amqp_simple_rpc(*cnn, channelNum, AMQP_BASIC_CONSUME_METHOD, replies, &s);
 
@@ -441,8 +444,11 @@ void AMQPQueue::sendConsumeCommand() {
 	while(1) {
 		amqp_maybe_release_buffers(*cnn);
 		int result = amqp_simple_wait_frame(*cnn, &frame);
-		if (result <= 0) return;
-
+		//modified by chenyujian 20120731
+		//if (result <= 0) return;
+		//according to definition of the amqp_simple_wait_frame
+		//result = 0 means success	
+		if (result < 0) return;
 		//printf("frame method.id=%d  frame.frame_type=%d\n",frame.payload.method.id, frame.frame_type);
 
 		if (frame.frame_type != AMQP_FRAME_METHOD){
@@ -474,7 +480,9 @@ void AMQPQueue::sendConsumeCommand() {
 		pmessage->setRoutingKey(delivery->routing_key);
 
 		result = amqp_simple_wait_frame(*cnn, &frame);
-		if (result <= 0) {
+		//modified by chenyujian 20120731
+		//if (result <= 0) {
+		if (result < 0) {	
 			throw AMQPException("The returned read frame is invalid");
 			return;
 		}
@@ -496,7 +504,9 @@ void AMQPQueue::sendConsumeCommand() {
 
 		while (body_received < body_target) {
 			result = amqp_simple_wait_frame(*cnn, &frame);
-			if (result <= 0) break;
+			//modified by chenyujian 20120731
+			//if (result <= 0) break;
+			if (result < 0) break;
 			//printf("frame.frame_type=%d\n", frame.frame_type);
 
 			if (frame.frame_type != AMQP_FRAME_BODY) {
