@@ -115,6 +115,7 @@ class AMQPMessage {
 
 		AMQPQueue * getQueue();
 
+		void Qos(uint32_t prefetch_size, uint16_t prefetch_count, amqp_boolean_t global );
 };
 
 
