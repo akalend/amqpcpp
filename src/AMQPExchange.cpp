@@ -262,8 +262,10 @@ void AMQPExchange::sendPublishCommand(const char * message, const char * key) {
 }
 
 void AMQPExchange::setHeader(string name, int value) {
-	iHeaders.insert(pair<string,int>( string(name), value));
+	iHeaders[name] = value;
+	//iHeaders.insert(pair<string,int>( string(name), value));
 }
 void AMQPExchange::setHeader(string name, string value) {
-	sHeaders.insert(pair<string,string>( string(name), value));
+	sHeaders[name] = value;
+	//sHeaders.insert(pair<string,string>( string(name), value));
 }
