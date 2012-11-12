@@ -631,3 +631,23 @@ void AMQPQueue::sendAckCommand() {
 
 	amqp_send_method(*cnn, channelNum, AMQP_BASIC_ACK_METHOD, &s);
 }
+
+void AMQPQueue::Qos(
+        uint32_t prefetch_size,
+        uint16_t prefetch_count,
+        amqp_boolean_t global )
+{
+    amqp_method_number_t method_ok = AMQP_BASIC_QOS_OK_METHOD;
+
+    amqp_basic_qos_t req;
+    req.prefetch_size = prefetch_size;
+    req.prefetch_count = prefetch_count;
+    req.global = global;
+
+    amqp_rpc_reply_t res = amqp_simple_rpc( *cnn, channelNum,
+                               AMQP_BASIC_QOS_METHOD, &method_ok, &req);
+
+    if (res.reply.id != AMQP_BASIC_QOS_OK_METHOD) {
+        throw AMQPException("AMQPQueue::Qos Fail.");
+    }
+}
