@@ -98,21 +98,24 @@ string AMQPMessage::getRoutingKey() {
 void AMQPMessage::addHeader(string name, amqp_bytes_t * value) {
 	string svalue;
 	svalue.assign(( const char *) value->bytes, value->len);
-	headers.insert( pair<string,string>(name,svalue));
+	headers[name] = svalue;
+	//headers.insert( pair<string,string>(name,svalue));
 }
 
 void AMQPMessage::addHeader(string name, uint64_t * value) {
 	char ivalue[32];
 	bzero(ivalue,32);
 	sprintf(ivalue,"%llu", *value);
-	headers.insert(pair<string,string>(name,string(ivalue)));
+	headers[name] = string(ivalue);
+	//headers.insert(pair<string,string>(name,string(ivalue)));
 }
 
 void AMQPMessage::addHeader(string name, uint8_t * value) {
 	char ivalue[4];
 	bzero(ivalue,4);
 	sprintf(ivalue,"%d",*value);
-	headers.insert( pair<string,string>(name,string(ivalue)));
+	headers[name] = string(ivalue);
+	//headers.insert( pair<string,string>(name,string(ivalue)));
 }
 
 string AMQPMessage::getHeader(string name) {
