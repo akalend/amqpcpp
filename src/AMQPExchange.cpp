@@ -245,7 +245,7 @@ void AMQPExchange::sendPublishCommand(const char * message, const char * key) {
 	short mandatory = (parms & AMQP_MANDATORY) ? 1:0;
 	short immediate = (parms & AMQP_IMMIDIATE) ? 1:0;
 
-	amqp_basic_publish(
+	int res = amqp_basic_publish(
 		*cnn,
 		1,
 		exchangeByte,
@@ -255,6 +255,10 @@ void AMQPExchange::sendPublishCommand(const char * message, const char * key) {
 		&props,
 		messageByte
 	);
+
+        if ( 0 > res ) {
+		throw AMQPException("AMQP Publish Fail." );
+	}
 }
 
 void AMQPExchange::setHeader(string name, int value) {
