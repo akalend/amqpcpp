@@ -93,6 +93,7 @@ class AMQPMessage {
 		void addHeader(string name, amqp_bytes_t * value);
 		void addHeader(string name, uint64_t * value);
 		void addHeader(string name, uint8_t * value);
+		void addHeader(amqp_bytes_t * name, amqp_bytes_t * value);
 		string getHeader(string name);
 
 		void setConsumerTag( amqp_bytes_t consumer_tag);
@@ -213,6 +214,7 @@ class AMQPQueue : public AMQPBase  {
 class AMQPExchange : public AMQPBase {
 	string type;
 	map<string,string> sHeaders;
+	map<string,string> sHeadersSpecial;
 	map<string, int> iHeaders;
 
 	public:
@@ -234,6 +236,7 @@ class AMQPExchange : public AMQPBase {
 
 		void setHeader(string name, int value);
 		void setHeader(string name, string value);
+		void setHeader(string name, string value, bool special);
 
 	private:
 		AMQPExchange();
