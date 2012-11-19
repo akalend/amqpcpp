@@ -118,6 +118,16 @@ void AMQPMessage::addHeader(string name, uint8_t * value) {
 	//headers.insert( pair<string,string>(name,string(ivalue)));
 }
 
+void AMQPMessage::addHeader(amqp_bytes_t * name, amqp_bytes_t * value) {
+	//cout << "name " << name << endl;
+	string sname;
+	sname.assign((const char *) name->bytes, name->len);
+	string svalue;
+	svalue.assign((const char *) value->bytes, value->len);
+	headers[sname] = string(svalue);
+	//headers.insert(pair<string, string>(sname, svalue));
+}
+
 string AMQPMessage::getHeader(string name) {
 	if (headers.find(name) == headers.end())
 		return "";

@@ -242,6 +242,20 @@ void AMQPExchange::sendPublishCommand(const char * message, const char * key) {
 		props._flags += AMQP_BASIC_REPLY_TO_FLAG;
 	}
 
+	props.headers.num_entries = sHeadersSpecial.size();
+	amqp_table_entry_t_ entries[props.headers.num_entries];
+
+	int i = 0;
+	map<string, string>::iterator it;
+	for (it = sHeadersSpecial.begin(); it != sHeadersSpecial.end(); it++) {
+		entries[i].key = amqp_cstring_bytes((*it).first.c_str());
+		entries[i].value.kind = AMQP_FIELD_KIND_UTF8;
+		entries[i].value.value.bytes = amqp_cstring_bytes((*it).second.c_str());
+		i++;
+	}
+	props.headers.entries = entries;
+	props._flags += AMQP_BASIC_HEADERS_FLAG;
+
 	short mandatory = (parms & AMQP_MANDATORY) ? 1:0;
 	short immediate = (parms & AMQP_IMMIDIATE) ? 1:0;
 
@@ -265,7 +279,17 @@ void AMQPExchange::setHeader(string name, int value) {
 	iHeaders[name] = value;
 	//iHeaders.insert(pair<string,int>( string(name), value));
 }
+
+void AMQPExchange::setHeader(string name, string value, bool special) {
+	if (special) {
+		sHeadersSpecial[name] = value;
+		//sHeadersSpecial.insert(pair<string, string>(string(name), value));
+	} else {
+		sHeaders[name] = value;
+		//sHeaders.insert(pair<string, string>(string(name), value));
+	}
+}
+
 void AMQPExchange::setHeader(string name, string value) {
-	sHeaders[name] = value;
-	//sHeaders.insert(pair<string,string>( string(name), value));
+	setHeader(name, value, 0);
 }
