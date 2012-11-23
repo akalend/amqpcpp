@@ -115,8 +115,6 @@ class AMQPMessage {
 		void setDeliveryTag(uint32_t delivery_tag);
 
 		AMQPQueue * getQueue();
-
-		void Qos(uint32_t prefetch_size, uint16_t prefetch_count, amqp_boolean_t global );
 };
 
 
@@ -196,7 +194,8 @@ class AMQPQueue : public AMQPBase  {
 		void addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*) );
 
 		~AMQPQueue();
-
+		
+		void Qos(uint32_t prefetch_size, uint16_t prefetch_count, amqp_boolean_t global );
 	private:
 		void sendDeclareCommand();
 		void sendDeleteCommand();
