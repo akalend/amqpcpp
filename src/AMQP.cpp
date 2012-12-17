@@ -109,7 +109,7 @@ void AMQP::parseHostPort(string hostPortString ) {
                 if ( pos2 == string::npos) {
                         host = hostPortString;
                 } else {
-                        vhost.assign(hostPortString, pos2, hostPortString.size()-pos2);
+                        vhost.assign(hostPortString, pos2+1, hostPortString.size()-pos2);
                         if (pos2 != 0) {
                                 host.assign(hostPortString, 0, pos2);
                         }
@@ -119,7 +119,7 @@ void AMQP::parseHostPort(string hostPortString ) {
                         portString.assign(hostPortString, 1, hostPortString.size()-1);
                 } else {
                         portString.assign(hostPortString, 1, pos2-1);
-                        vhost.assign(hostPortString, pos2, hostPortString.size()-pos2);
+                        vhost.assign(hostPortString, pos2+1, hostPortString.size()-pos2);
                 }
                 port = atoi(portString.c_str());
         } else {
@@ -127,7 +127,7 @@ void AMQP::parseHostPort(string hostPortString ) {
                         host.assign(hostPortString, 0, pos);
                         portString.assign(hostPortString, pos+1, hostPortString.size()-pos+1);
                 } else {
-                        vhost.assign(hostPortString, pos2, hostPortString.size()-pos2);
+                        vhost.assign(hostPortString, pos2+1, hostPortString.size()-pos2);
                         host.assign(hostPortString, 0, pos);
                         portString.assign(hostPortString, pos+1, pos2-pos-1);
                 }
