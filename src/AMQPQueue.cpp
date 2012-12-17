@@ -405,6 +405,7 @@ void AMQPQueue::sendConsumeCommand() {
 	};
 
 	amqp_basic_consume_t s;
+	memset(&s,0,sizeof(amqp_basic_consume_t));
 		s.ticket = channelNum;
 		s.queue = queueByte;
 		s.consumer_tag = consumer_tag;
