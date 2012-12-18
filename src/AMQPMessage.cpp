@@ -27,7 +27,8 @@ void AMQPMessage::setMessage(const char * data,uint32_t length) {
 	if (this->data)
 		free(this->data);
 
-	this->data = strdup(data);
+	this->data = (char*)malloc(length);
+	memcpy(this->data,data,length);
 	this->len = length;
 }
 
