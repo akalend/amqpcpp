@@ -165,13 +165,18 @@ void AMQPExchange::sendBindCommand(const char * queue, const char * key){
 }
 
 void AMQPExchange::Publish(string message, string key) {
-	sendPublishCommand(message.c_str(), key.c_str());
+	sendPublishCommand(amqp_cstring_bytes(message.c_str()), key.c_str());
 }
 
-void AMQPExchange::sendPublishCommand(const char * message, const char * key) {
+void AMQPExchange::Publish(const char * data, uint32_t length, string key) {
+	amqp_bytes_t messageByte = amqp_bytes_malloc(length);
+	memcpy(messageByte.bytes,data,length);
+	sendPublishCommand(messageByte, key.c_str());
+}
+
+void AMQPExchange::sendPublishCommand(amqp_bytes_t messageByte, const char * key) {
 	amqp_bytes_t exchangeByte = amqp_cstring_bytes(name.c_str());
 	amqp_bytes_t keyrouteByte = amqp_cstring_bytes(key);
-	amqp_bytes_t messageByte = amqp_cstring_bytes(message);
 
 	amqp_basic_properties_t props;
 

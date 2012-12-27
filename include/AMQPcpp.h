@@ -232,6 +232,7 @@ class AMQPExchange : public AMQPBase {
 		void Bind(string queueName, string key);
 
 		void Publish(string message, string key);
+		void Publish(const char * data, uint32_t length, string key);
 
 		void setHeader(string name, int value);
 		void setHeader(string name, string value);
@@ -245,7 +246,7 @@ class AMQPExchange : public AMQPBase {
 		void sendPublishCommand();
 
 		void sendBindCommand(const char * queueName, const char * key);
-		void sendPublishCommand(const char * message, const char * key);
+		void sendPublishCommand(amqp_bytes_t messageByte, const char * key);
 		void sendCommand();
 		void checkReply(amqp_rpc_reply_t * res);
 		void checkClosed(amqp_rpc_reply_t * res);
