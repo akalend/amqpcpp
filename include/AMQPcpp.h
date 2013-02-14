@@ -134,7 +134,7 @@ class AMQPBase {
 
 
 	public:
-		~AMQPBase();
+		virtual ~AMQPBase();
 		int getChannelNum();
 		void setParam(short param);
 		string getName();
@@ -193,7 +193,7 @@ class AMQPQueue : public AMQPBase  {
 
 		void addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*) );
 
-		~AMQPQueue();
+		virtual ~AMQPQueue();
 		
 		void Qos(uint32_t prefetch_size, uint16_t prefetch_count, amqp_boolean_t global );
 	private:
@@ -219,6 +219,7 @@ class AMQPExchange : public AMQPBase {
 	public:
 		AMQPExchange(amqp_connection_state_t * cnn, int channelNum);
 		AMQPExchange(amqp_connection_state_t * cnn, int channelNum, string name);
+		virtual ~AMQPExchange();
 
 		void Declare();
 		void Declare(string name);
