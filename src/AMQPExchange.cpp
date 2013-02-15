@@ -23,6 +23,11 @@ AMQPExchange::AMQPExchange(amqp_connection_state_t * cnn, int channelNum, string
 	openChannel();
 }
 
+AMQPExchange::~AMQPExchange()
+{
+}
+
+
 //Declare
 
 void AMQPExchange::Declare() {
