@@ -14,7 +14,7 @@ AMQPException::AMQPException(string message) {
 
 AMQPException::AMQPException(string action, int error_code)
 {
-    this->message = action + " : " + amqp_error_string2(error_code);
+	this->message = action + " : " + amqp_error_string2(error_code);
 }
 
 AMQPException::AMQPException( amqp_rpc_reply_t * res) {
