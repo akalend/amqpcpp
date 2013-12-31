@@ -156,7 +156,7 @@ void AMQP::sockConnect() {
 
 	if (sockfd<0){
 		amqp_destroy_connection(cnn);
-		throw AMQPException("AMQP cannot create socket descriptor");
+        throw AMQPException("AMQP cannot create socket descriptor", sockfd);
 	}
 
 	//cout << "sockfd="<< sockfd  << "  pid=" <<  getpid() <<endl;

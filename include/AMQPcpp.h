@@ -48,6 +48,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <exception>
 
 //export AMQP;
 using namespace std;
@@ -58,15 +59,24 @@ enum AMQPEvents_e {
 	AMQP_MESSAGE, AMQP_SIGUSR, AMQP_CANCEL, AMQP_CLOSE_CHANNEL
 };
 
-class AMQPException {
+class AMQPException : public std::exception {
 	string message;
 	int code;
 	public:
-		AMQPException(string message);
-		AMQPException(amqp_rpc_reply_t * res);
+        explicit AMQPException(string message);
+        explicit AMQPException(amqp_rpc_reply_t * res);
 
-		string   getMessage();
-		uint16_t getReplyCode();
+        // creates error message from error code provided by librabbitmq
+        AMQPException(string action, int error_code);
+
+        virtual ~AMQPException() throw() {}
+
+        string   getMessage() const;
+        uint16_t getReplyCode() const;
+
+        virtual const char* what() const throw () {
+            return message.c_str();
+        }
 };
 
 
