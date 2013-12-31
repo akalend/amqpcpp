@@ -63,20 +63,20 @@ class AMQPException : public std::exception {
 	string message;
 	int code;
 	public:
-	explicit AMQPException(string message);
-	explicit AMQPException(amqp_rpc_reply_t * res);
-	
-	// creates error message from error code provided by librabbitmq
-	AMQPException(string action, int error_code);
-	
-	virtual ~AMQPException() throw() {}
-	
-	string   getMessage() const;
-	uint16_t getReplyCode() const;
-	
-	virtual const char* what() const throw () {
-		return message.c_str();
-	}
+		explicit AMQPException(string message);
+		explicit AMQPException(amqp_rpc_reply_t * res);
+		
+		// creates error message from error code provided by librabbitmq
+		AMQPException(string action, int error_code);
+		
+		virtual ~AMQPException() throw() {}
+		
+		string   getMessage() const;
+		uint16_t getReplyCode() const;
+		
+		virtual const char* what() const throw () {
+			return message.c_str();
+		}
 };
 
 
