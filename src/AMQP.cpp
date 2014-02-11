@@ -151,6 +151,7 @@ void AMQP::printConnect() {
 }
 
 void AMQP::sockConnect() {
+    // for  new version librabbitmq
     cnn = amqp_new_connection();
     cnn_socket = amqp_tcp_socket_new(cnn);
     if (!cnn_socket) {
