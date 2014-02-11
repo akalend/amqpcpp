@@ -174,7 +174,7 @@ void AMQP::login() {
     if (res.reply_type == AMQP_RESPONSE_NORMAL)
         return;
     std::stringstream buff;
-    buff << "login error: vhost: " << vhost << " user:" << user << " password:" << password << " status: " << res.reply_type;
+    buff << "login error: vhost: " << vhost << " user:" << user << " password:" << password << " status: " << res.reply_type " lib err:" << amqp_error_string2 (res.library_error);
     amqp_destroy_connection(cnn);
     throw AMQPException(buff.str());
 }
