@@ -6,6 +6,8 @@
  *
  */
 
+#include <sstream>
+
 #include "AMQPcpp.h"
 
 AMQP::AMQP() {
@@ -159,9 +161,11 @@ void AMQP::sockConnect() {
         throw AMQPException("creating TCP socket");
     }
     int status = amqp_socket_open(cnn_socket, host.c_str(), port);
-    if (status) {
+    if (status != AMQP_STATUS_OK) {
         amqp_destroy_connection(cnn);
-        throw AMQPException("opening TCP socket 1");
+        std::stringstream buff;
+        buff << "opening TCP socket 1 host:" << host << " port:" << port << " status: " << status;
+        throw AMQPException(buff.str());
     }
 }
 
