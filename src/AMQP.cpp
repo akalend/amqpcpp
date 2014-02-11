@@ -170,12 +170,13 @@ void AMQP::sockConnect() {
 }
 
 void AMQP::login() {
-    amqp_rpc_reply_t res = amqp_login(cnn, vhost.c_str(), 0, FRAME_MAX, 0, AMQP_SASL_METHOD_PLAIN, user.c_str(), password.c_str());
+    amqp_rpc_reply_t res = amqp_login(cnn, vhost.c_str(), AMQP_DEFAULT_MAX_CHANNELS, AMQP_DEFAULT_FRAME_SIZE, 0, AMQP_SASL_METHOD_PLAIN, user.c_str(), password.c_str());
     if (res.reply_type == AMQP_RESPONSE_NORMAL)
         return;
-
+    std::stringstream buff;
+    buff << "login error: vhost: " << vhost << " user:" << user << " password:" << password << " status: " << res.reply_type;
     amqp_destroy_connection(cnn);
-    throw AMQPException(&res);
+    throw AMQPException(buff.str());
 }
 
 AMQPExchange * AMQP::createExchange() {
