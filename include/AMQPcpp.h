@@ -261,7 +261,6 @@ class AMQP {
 	string vhost;
 	string user;
 	string password;
-	int sockfd;
 	int channelNumber;
 
 	amqp_connection_state_t cnn;

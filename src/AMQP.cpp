@@ -31,7 +31,6 @@ AMQP::~AMQP() {
     }
 
     amqp_destroy_connection(cnn);
-    close(sockfd);
 };
 
 void AMQP::init() {
