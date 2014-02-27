@@ -36,13 +36,14 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include "strings.h"
+#include <string>
 
 #include <unistd.h>
 #include <stdint.h>
 
-#include "amqp.h"
-#include "amqp_framing.h"
+#include <amqp_tcp_socket.h>
+#include <amqp.h>
+#include <amqp_framing.h>
 
 #include <iostream>
 #include <vector>
@@ -260,10 +261,10 @@ class AMQP {
 	string vhost;
 	string user;
 	string password;
-	int sockfd;
 	int channelNumber;
 
 	amqp_connection_state_t cnn;
+        amqp_socket_t * cnn_socket;        
 	AMQPExchange * exchange;
 
 	vector<AMQPBase*> channels;

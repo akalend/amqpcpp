@@ -1,0 +1,17 @@
+g++  -Wall -I/usr/local/include -L/usr/local/lib -Iinclude/  -c -o src/AMQP.o src/AMQP.cpp
+src/AMQP.cpp: In member function ‘void AMQP::sockConnect()’:
+src/AMQP.cpp:163:2: warning: ‘void amqp_set_sockfd(amqp_connection_state_t, int)’ is deprecated (declared at /usr/local/include/amqp.h:1030) [-Wdeprecated-declarations]
+src/AMQP.cpp:163:29: warning: ‘void amqp_set_sockfd(amqp_connection_state_t, int)’ is deprecated (declared at /usr/local/include/amqp.h:1030) [-Wdeprecated-declarations]
+g++  -Wall -I/usr/local/include -L/usr/local/lib -Iinclude/  -c -o src/AMQPBase.o src/AMQPBase.cpp
+g++  -Wall -I/usr/local/include -L/usr/local/lib -Iinclude/  -c -o src/AMQPException.o src/AMQPException.cpp
+g++  -Wall -I/usr/local/include -L/usr/local/lib -Iinclude/  -c -o src/AMQPMessage.o src/AMQPMessage.cpp
+src/AMQPMessage.cpp: In member function ‘void AMQPMessage::addHeader(std::string, uint64_t*)’:
+src/AMQPMessage.cpp:109:31: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t {aka long unsigned int}’ [-Wformat]
+g++  -Wall -I/usr/local/include -L/usr/local/lib -Iinclude/  -c -o src/AMQPExchange.o src/AMQPExchange.cpp
+g++  -Wall -I/usr/local/include -L/usr/local/lib -Iinclude/  -c -o src/AMQPQueue.o src/AMQPQueue.cpp
+src/AMQPQueue.cpp: In member function ‘void AMQPQueue::sendConsumeCommand()’:
+src/AMQPQueue.cpp:386:27: warning: variable ‘consume_ok’ set but not used [-Wunused-but-set-variable]
+ar rcs libamqpcpp.a src/AMQP.o src/AMQPBase.o src/AMQPException.o src/AMQPMessage.o src/AMQPExchange.o src/AMQPQueue.o
+g++ -Wall -I/usr/local/include -L/usr/local/lib -Iinclude/ -o example_publish examples/example_publish.cpp libamqpcpp.a -lrabbitmq
+g++ -Wall -I/usr/local/include -L/usr/local/lib -Iinclude/ -o example_consume examples/example_consume.cpp libamqpcpp.a -lrabbitmq
+g++ -Wall -I/usr/local/include -L/usr/local/lib -Iinclude/ -o example_get examples/example_get.cpp libamqpcpp.a -lrabbitmq
