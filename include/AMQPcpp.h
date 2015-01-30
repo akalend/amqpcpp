@@ -233,7 +233,7 @@ class AMQPExchange : public AMQPBase {
 		void Bind(string queueName, string key);
 
 		void Publish(string message, string key);
-		void Publish(const char * data, uint32_t length, string key);
+		void Publish(char * data, uint32_t length, string key);
 
 		void setHeader(string name, int value);
 		void setHeader(string name, string value);
