@@ -80,16 +80,16 @@ void AMQP::parseUserStr(string userString) {
 	int pos = userString.find(':');
 	switch (pos) {
 		case 0:
-			user.assign(userString, 1, userString.size()-1);
-			password=AMQPPSWD;
+			user = AMQPLOGIN;
+			password.assign(userString, 1, userString.size()-1);
 		break;
 		case -1:
 			user=userString;
 			password=AMQPPSWD;
 		break;
 		default:
-			user.assign(userString, pos+1, userString.size()+1-pos);
-			password.assign(userString, 0, pos);
+			user.assign(userString, 0, pos);
+			password.assign(userString, pos+1, userString.size()-pos-1);
 		break;
 	}
 }
