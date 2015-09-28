@@ -158,7 +158,7 @@ void AMQPQueue::Purge(string name) {
 void AMQPQueue::sendPurgeCommand() {
 	amqp_bytes_t queue = amqp_cstring_bytes(name.c_str());
 
-	amqp_queue_delete_t s;
+	amqp_queue_purge_t s;
 		s.ticket = 0;
 		s.queue = queue;
 		s.nowait = ( AMQP_NOWAIT & parms ) ? 1:0;
