@@ -173,9 +173,10 @@ void AMQPExchange::Publish(string message, string key) {
 	sendPublishCommand(amqp_cstring_bytes(message.c_str()), key.c_str());
 }
 
-void AMQPExchange::Publish(const char * data, uint32_t length, string key) {
-	amqp_bytes_t messageByte = amqp_bytes_malloc(length);
-	memcpy(messageByte.bytes,data,length);
+void AMQPExchange::Publish(char * data, uint32_t length, string key) {
+	amqp_bytes_t messageByte;
+	messageByte.bytes = data;
+	messageByte.len = length;
 	sendPublishCommand(messageByte, key.c_str());
 }
 
