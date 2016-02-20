@@ -12,6 +12,11 @@ AMQPException::AMQPException(string message) {
 	this->message= message;
 }
 
+AMQPException::AMQPException(string action, int error_code)
+{
+	this->message = action + " : " + amqp_error_string2(error_code);
+}
+
 AMQPException::AMQPException( amqp_rpc_reply_t * res) {
 	if( res->reply_type == AMQP_RESPONSE_LIBRARY_EXCEPTION) {
 		this->message = res->library_error ? strerror(res->library_error) : "end-of-stream";
@@ -49,10 +54,10 @@ AMQPException::AMQPException( amqp_rpc_reply_t * res) {
 	}
 }
 
-uint16_t AMQPException::getReplyCode() {
+uint16_t AMQPException::getReplyCode() const {
 	return code;
 }
 
-string AMQPException::getMessage() {
+string AMQPException::getMessage() const {
 	return message;
 }
