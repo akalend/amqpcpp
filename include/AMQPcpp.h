@@ -270,19 +270,6 @@ class AMQPExchange : public AMQPBase {
 };
 
 class AMQP {
-	int port;
-	string host;
-	string vhost;
-	string user;
-	string password;
-	amqp_socket_t *sockfd;
-	int channelNumber;
-
-	amqp_connection_state_t cnn;
-	AMQPExchange * exchange;
-
-	vector<AMQPBase*> channels;
-
 	public:
 		AMQP();
 		AMQP(string cnnStr);
@@ -298,8 +285,8 @@ class AMQP {
 
 		void closeChannel();
 
-	private:
-		//AMQP& operator =(AMQP &ob);
+	protected:
+
 		AMQP( AMQP &ob );
 		void init(enum AMQPProto_e proto);
 		void initDefault(enum AMQPProto_e proto);
@@ -309,7 +296,19 @@ class AMQP {
 		void parseUserStr(string userString );
 		void sockConnect();
 		void login();
-		//void chanalConnect();
+
+		int port;
+		string host;
+		string vhost;
+		string user;
+		string password;
+		amqp_socket_t *sockfd;
+		int channelNumber;
+
+		amqp_connection_state_t cnn;
+		AMQPExchange * exchange;
+
+		vector<AMQPBase*> channels;
 };
 
 class AMQPS : public AMQP {
