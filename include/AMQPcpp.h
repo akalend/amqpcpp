@@ -10,6 +10,7 @@
 #define __AMQPCPP
 
 #define AMQPPORT 5672
+#define AMQPSPORT 5671
 #define AMQPHOST "localhost"
 #define AMQPVHOST "/"
 #define AMQPLOGIN "guest"
@@ -57,6 +58,10 @@ class AMQPQueue;
 
 enum AMQPEvents_e {
 	AMQP_MESSAGE, AMQP_SIGUSR, AMQP_CANCEL, AMQP_CLOSE_CHANNEL
+};
+
+enum AMQPProto_e {
+	AMQP_proto, AMQPS_proto
 };
 
 class AMQPException : public std::exception {
@@ -270,8 +275,14 @@ class AMQP {
 	string vhost;
 	string user;
 	string password;
-	int sockfd;
+	amqp_socket_t *sockfd;
 	int channelNumber;
+	enum AMQPProto_e proto;
+	string cacert_path;
+	string client_cert_path;
+	string client_key_path;
+	bool verify_peer;
+	bool verify_hostname;
 
 	amqp_connection_state_t cnn;
 	AMQPExchange * exchange;
@@ -282,6 +293,12 @@ class AMQP {
 		AMQP();
 		AMQP(string cnnStr);
 		~AMQP();
+
+		AMQPS();
+		AMQPS(string cnnStr,
+				string cacert_path_, string client_cert_path_, string client_key_path_,
+				bool verify_peer_, bool verify_hostname_);
+		~AMQPS();
 
 		AMQPExchange * createExchange();
 		AMQPExchange * createExchange(string name);
@@ -296,8 +313,8 @@ class AMQP {
 	private:
 		//AMQP& operator =(AMQP &ob);
 		AMQP( AMQP &ob );
-		void init();
-		void initDefault();
+		void init(enum AMQPProto_e proto);
+		void initDefault(enum AMQPProto_e proto);
 		void connect();
 		void parseCnnString(string cnnString );
 		void parseHostPort(string hostPortString );
