@@ -2,7 +2,7 @@ CXX      = g++
 CFLAGS   = -Wall
 CPPFLAGS = $(CFLAGS) -I/usr/local/include -L/usr/local/lib -Iinclude/
 
-LIBRARIES= rabbitmq
+LIBRARIES= rabbitmq ssl crypto
 LIBS     = $(addprefix -l,$(LIBRARIES))
 
 LIBNAME  = amqpcpp
