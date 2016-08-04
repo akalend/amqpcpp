@@ -237,9 +237,6 @@ void AMQP::sockConnect() {
 		amqp_destroy_connection(cnn);
 		throw AMQPException("AMQP cannot create socket");
 	}
-
-	//cout << "sockfd="<< sockfd  << "  pid=" <<  getpid() <<endl;
-	amqp_set_sockfd(cnn, sockfd);
 }
 
 void AMQP::login() {
