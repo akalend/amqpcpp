@@ -30,8 +30,9 @@ AMQP::~AMQP() {
 		}
 	}
 
+	amqp_channel_close(cnn, 1, AMQP_REPLY_SUCCESS);
+	amqp_connection_close(cnn, AMQP_REPLY_SUCCESS);
 	amqp_destroy_connection(cnn);
-	amqp_socket_close(sockfd);
 };
 
 
