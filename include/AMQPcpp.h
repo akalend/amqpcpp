@@ -277,12 +277,6 @@ class AMQP {
 	string password;
 	amqp_socket_t *sockfd;
 	int channelNumber;
-	enum AMQPProto_e proto;
-	string cacert_path;
-	string client_cert_path;
-	string client_key_path;
-	bool verify_peer;
-	bool verify_hostname;
 
 	amqp_connection_state_t cnn;
 	AMQPExchange * exchange;
@@ -293,12 +287,6 @@ class AMQP {
 		AMQP();
 		AMQP(string cnnStr);
 		~AMQP();
-
-		AMQPS();
-		AMQPS(string cnnStr,
-				string cacert_path_, string client_cert_path_, string client_key_path_,
-				bool verify_peer_, bool verify_hostname_);
-		~AMQPS();
 
 		AMQPExchange * createExchange();
 		AMQPExchange * createExchange(string name);
@@ -322,6 +310,21 @@ class AMQP {
 		void sockConnect();
 		void login();
 		//void chanalConnect();
+};
+
+class AMQPS : public AMQP {
+	enum AMQPProto_e proto;
+		string cacert_path;
+		string client_cert_path;
+		string client_key_path;
+		bool verify_peer;
+		bool verify_hostname;
+
+		AMQPS();
+		AMQPS(string cnnStr,
+				string cacert_path_, string client_cert_path_, string client_key_path_,
+				bool verify_peer_, bool verify_hostname_);
+		~AMQPS();
 };
 
 #endif //__AMQPCPP

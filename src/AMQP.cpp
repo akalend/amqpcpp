@@ -9,12 +9,14 @@
 #include "AMQPcpp.h"
 
 AMQP::AMQP() {
+	proto = AMQP_proto;
 	AMQP::init(AMQP_proto);
 	AMQP::initDefault(AMQP_proto);
 	AMQP::connect();
 };
 
 AMQP::AMQP(string cnnStr) {
+	proto = AMQP_proto;
 	AMQP::init(AMQP_proto);
 	AMQP::parseCnnString(cnnStr);
 	AMQP::connect();
@@ -33,13 +35,14 @@ AMQP::~AMQP() {
 };
 
 
-AMQP::AMQPS() {
+AMQPS::AMQPS() {
+	proto = AMQPS_proto;
 	AMQP::init(AMQPS_proto);
 	AMQP::initDefault(AMQPS_proto);
 	AMQP::connect();
 };
 
-AMQP::AMQPS(string cnnStr,
+AMQPS::AMQPS(string cnnStr,
 		string cacert_path_, string client_cert_path_, string client_key_path_,
 		bool verify_peer_=false, bool verify_hostname_=false) {
 	proto = AMQPS_proto;
@@ -54,7 +57,7 @@ AMQP::AMQPS(string cnnStr,
 	AMQP::connect();
 };
 
-AMQP::~AMQPS() {
+AMQPS::~AMQPS() {
 	if (channels.size()) {
 		vector<AMQPBase*>::iterator i;
 		for (i=channels.begin(); i!=channels.end(); i++) {
