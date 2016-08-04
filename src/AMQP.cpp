@@ -103,7 +103,7 @@ void AMQP::initDefault(enum AMQPProto_e proto) {
 
 void AMQP::parseCnnString( string cnnString ) {
 	 if (!cnnString.size()) {
-		AMQP::initDefault();
+		AMQP::initDefault(proto);
 		return;
 	 }
 
@@ -207,6 +207,7 @@ void AMQP::printConnect() {
 }
 
 void AMQP::sockConnect() {
+	int status;
 	cnn = amqp_new_connection();
 
 	switch(proto) {
