@@ -274,7 +274,9 @@ class AMQPExchange : public AMQPBase {
 class AMQP {
 	public:
 		AMQP();
-		AMQP(string cnnStr);
+		AMQP(string cnnStr, enum AMQP_proto_e proto_,
+				string cacert_path_, string client_cert_path_, string client_key_path_,
+				bool verify_peer_, bool verify_hostname_);
 		~AMQP();
 
 		AMQPExchange * createExchange();
@@ -287,7 +289,7 @@ class AMQP {
 
 		void closeChannel();
 
-	protected:
+	private:
 
 		AMQP( AMQP &ob );
 		void init(enum AMQPProto_e proto);
@@ -300,6 +302,7 @@ class AMQP {
 		void login();
 
 		enum AMQPProto_e proto;
+
 		int port;
 		string host;
 		string vhost;
@@ -311,21 +314,14 @@ class AMQP {
 		amqp_connection_state_t cnn;
 		AMQPExchange * exchange;
 
+		string cacert_path;
+		string client_cert_path;
+		string client_key_path;
+		bool verify_peer;
+		bool verify_hostname;
+
 		vector<AMQPBase*> channels;
 };
 
-class AMQPS : public AMQP {
-	string cacert_path;
-	string client_cert_path;
-	string client_key_path;
-	bool verify_peer;
-	bool verify_hostname;
-
-	AMQPS();
-	AMQPS(string cnnStr,
-			string cacert_path_, string client_cert_path_, string client_key_path_,
-			bool verify_peer_, bool verify_hostname_);
-	~AMQPS();
-};
 
 #endif //__AMQPCPP

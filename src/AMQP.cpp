@@ -15,50 +15,22 @@ AMQP::AMQP() {
 	AMQP::connect();
 };
 
-AMQP::AMQP(string cnnStr) {
-	proto = AMQP_proto;
-	AMQP::init(AMQP_proto);
-	AMQP::parseCnnString(cnnStr);
-	AMQP::connect();
-};
-
-AMQP::~AMQP() {
-	if (channels.size()) {
-		vector<AMQPBase*>::iterator i;
-		for (i=channels.begin(); i!=channels.end(); i++) {
-			delete *i;
-		}
-	}
-
-	amqp_channel_close(cnn, 1, AMQP_REPLY_SUCCESS);
-	amqp_connection_close(cnn, AMQP_REPLY_SUCCESS);
-	amqp_destroy_connection(cnn);
-};
-
-
-AMQPS::AMQPS() {
-	proto = AMQPS_proto;
-	AMQP::init(AMQPS_proto);
-	AMQP::initDefault(AMQPS_proto);
-	AMQP::connect();
-};
-
-AMQPS::AMQPS(string cnnStr,
-		string cacert_path_, string client_cert_path_, string client_key_path_,
+AMQP::AMQP(string cnnStr, enum AMQP_proto_e proto_=AMQP_proto,
+		string cacert_path_="", string client_cert_path_="", string client_key_path_="",
 		bool verify_peer_=false, bool verify_hostname_=false) {
-	proto = AMQPS_proto;
+	proto = proto_;
 	cacert_path = cacert_path_;
 	client_cert_path = client_cert_path_;
 	client_key_path = client_key_path_;
 	verify_peer = verify_peer_;
 	verify_hostname = verify_hostname_;
 
-	AMQP::init(AMQPS_proto);
+	AMQP::init(proto);
 	AMQP::parseCnnString(cnnStr);
 	AMQP::connect();
 };
 
-AMQPS::~AMQPS() {
+AMQP::~AMQP() {
 	if (channels.size()) {
 		vector<AMQPBase*>::iterator i;
 		for (i=channels.begin(); i!=channels.end(); i++) {
@@ -288,3 +260,4 @@ void AMQP::closeChannel() {
 		channels.pop_back();
 	}
 }
+
