@@ -66,6 +66,8 @@ enum AMQPProto_e {
 	AMQP_proto, AMQPS_proto
 };
 
+#define SET_AMQP_PROTO_BY_SSL_USAGE(b) (b ? AMQPS_proto : AMQP_proto)
+
 class AMQPException : public std::exception {
 	string message;
 	int code;

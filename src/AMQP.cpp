@@ -9,16 +9,18 @@
 #include "AMQPcpp.h"
 
 AMQP::AMQP() {
-	proto = AMQP_proto;
-	AMQP::init(AMQP_proto);
-	AMQP::initDefault(AMQP_proto);
+	use_ssl = false;
+	proto = SET_AMQP_PROTO_BY_SSL_USAGE(use_ssl);
+	AMQP::init(proto);
+	AMQP::initDefault(proto);
 	AMQP::connect();
 };
 
-AMQP::AMQP(string cnnStr, enum AMQPProto_e proto_,
+AMQP::AMQP(string cnnStr, bool use_ssl_,
 		string cacert_path_, string client_cert_path_, string client_key_path_,
 		bool verify_peer_, bool verify_hostname_) {
-	proto = proto_;
+	use_ssl = use_ssl_;
+	proto = SET_AMQP_PROTO_BY_SSL_USAGE(use_ssl);
 	cacert_path = cacert_path_;
 	client_cert_path = client_cert_path_;
 	client_key_path = client_key_path_;
