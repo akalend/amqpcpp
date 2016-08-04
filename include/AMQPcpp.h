@@ -290,8 +290,6 @@ class AMQP {
 		void closeChannel();
 
 	private:
-
-		AMQP( AMQP &ob );
 		void init(enum AMQPProto_e proto);
 		void initDefault(enum AMQPProto_e proto);
 		void connect();
