@@ -276,7 +276,7 @@ class AMQPExchange : public AMQPBase {
 class AMQP {
 	public:
 		AMQP();
-		AMQP(string cnnStr, enum AMQPProto_e proto_=AMQP_proto,
+		AMQP(string cnnStr, bool use_ssl_=false,
 				string cacert_path_="", string client_cert_path_="", string client_key_path_="",
 				bool verify_peer_=false, bool verify_hostname_=false);
 		~AMQP();
@@ -301,7 +301,7 @@ class AMQP {
 		void sockConnect();
 		void login();
 
-		enum AMQPProto_e proto;
+
 
 		int port;
 		string host;
@@ -314,6 +314,8 @@ class AMQP {
 		amqp_connection_state_t cnn;
 		AMQPExchange * exchange;
 
+		bool use_ssl;
+		enum AMQPProto_e proto;
 		string cacert_path;
 		string client_cert_path;
 		string client_key_path;
