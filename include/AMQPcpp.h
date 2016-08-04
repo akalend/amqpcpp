@@ -274,7 +274,7 @@ class AMQPExchange : public AMQPBase {
 class AMQP {
 	public:
 		AMQP();
-		AMQP(string cnnStr, enum AMQP_proto_e proto_,
+		AMQP(string cnnStr, enum AMQPProto_e proto_,
 				string cacert_path_, string client_cert_path_, string client_key_path_,
 				bool verify_peer_, bool verify_hostname_);
 		~AMQP();

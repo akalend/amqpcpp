@@ -15,7 +15,7 @@ AMQP::AMQP() {
 	AMQP::connect();
 };
 
-AMQP::AMQP(string cnnStr, enum AMQP_proto_e proto_=AMQP_proto,
+AMQP::AMQP(string cnnStr, enum AMQPProto_e proto_=AMQP_proto,
 		string cacert_path_="", string client_cert_path_="", string client_key_path_="",
 		bool verify_peer_=false, bool verify_hostname_=false) {
 	proto = proto_;
