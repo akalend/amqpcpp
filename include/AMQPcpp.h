@@ -297,6 +297,7 @@ class AMQP {
 		void sockConnect();
 		void login();
 
+		enum AMQPProto_e proto;
 		int port;
 		string host;
 		string vhost;
@@ -312,18 +313,17 @@ class AMQP {
 };
 
 class AMQPS : public AMQP {
-	enum AMQPProto_e proto;
-		string cacert_path;
-		string client_cert_path;
-		string client_key_path;
-		bool verify_peer;
-		bool verify_hostname;
+	string cacert_path;
+	string client_cert_path;
+	string client_key_path;
+	bool verify_peer;
+	bool verify_hostname;
 
-		AMQPS();
-		AMQPS(string cnnStr,
-				string cacert_path_, string client_cert_path_, string client_key_path_,
-				bool verify_peer_, bool verify_hostname_);
-		~AMQPS();
+	AMQPS();
+	AMQPS(string cnnStr,
+			string cacert_path_, string client_cert_path_, string client_key_path_,
+			bool verify_peer_, bool verify_hostname_);
+	~AMQPS();
 };
 
 #endif //__AMQPCPP
