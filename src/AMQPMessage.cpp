@@ -27,8 +27,12 @@ void AMQPMessage::setMessage(const char * data,uint32_t length) {
 	if (this->data)
 		free(this->data);
 
-	this->data = (char*)malloc(length);
+	this->data = (char*)malloc(length + 1);
+	if (!this->data) {
+		throw AMQPException("setMessage: malloc failed");
+	}
 	memcpy(this->data,data,length);
+	this->data[length] = '\0';
 	this->len = length;
 }
 
