@@ -9,13 +9,25 @@
 #include "AMQPcpp.h"
 
 AMQP::AMQP() {
-	AMQP::init();
-	AMQP::initDefault();
+	use_ssl = false;
+	proto = SET_AMQP_PROTO_BY_SSL_USAGE(use_ssl);
+	AMQP::init(proto);
+	AMQP::initDefault(proto);
 	AMQP::connect();
 };
 
-AMQP::AMQP(string cnnStr) {
-	AMQP::init();
+AMQP::AMQP(string cnnStr, bool use_ssl_,
+		string cacert_path_, string client_cert_path_, string client_key_path_,
+		bool verify_peer_, bool verify_hostname_) {
+	use_ssl = use_ssl_;
+	proto = SET_AMQP_PROTO_BY_SSL_USAGE(use_ssl);
+	cacert_path = cacert_path_;
+	client_cert_path = client_cert_path_;
+	client_key_path = client_key_path_;
+	verify_peer = verify_peer_;
+	verify_hostname = verify_hostname_;
+
+	AMQP::init(proto);
 	AMQP::parseCnnString(cnnStr);
 	AMQP::connect();
 };
@@ -28,26 +40,44 @@ AMQP::~AMQP() {
 		}
 	}
 
+	amqp_channel_close(cnn, 1, AMQP_REPLY_SUCCESS);
+	amqp_connection_close(cnn, AMQP_REPLY_SUCCESS);
 	amqp_destroy_connection(cnn);
-	close(sockfd);
 };
 
-void AMQP::init() {
-	exchange=NULL;
-	channelNumber=0;
+void AMQP::init(enum AMQPProto_e proto) {
+	switch(proto) {
+		case AMQPS_proto:
+
+		case AMQP_proto:
+		default:
+			exchange=NULL;
+			channelNumber=0;
+			break;
+	}
 }
 
-void AMQP::initDefault() {
+void AMQP::initDefault(enum AMQPProto_e proto) {
+
 	host = AMQPHOST;
-	port = AMQPPORT;
 	vhost = AMQPVHOST;
 	user = AMQPLOGIN;
 	password = AMQPPSWD;
+
+	switch(proto) {
+		case AMQPS_proto:
+			port = AMQPSPORT;
+			break;
+		case AMQP_proto:
+		default:
+			port = AMQPPORT;
+			break;
+	}
 }
 
 void AMQP::parseCnnString( string cnnString ) {
 	 if (!cnnString.size()) {
-		AMQP::initDefault();
+		AMQP::initDefault(proto);
 		return;
 	 }
 
@@ -151,25 +181,49 @@ void AMQP::printConnect() {
 }
 
 void AMQP::sockConnect() {
+	int status;
 	cnn = amqp_new_connection();
-	sockfd = amqp_open_socket(host.c_str(), port);
 
-	if (sockfd<0){
-		amqp_destroy_connection(cnn);
-		throw AMQPException("AMQP cannot create socket descriptor", sockfd);
+	switch(proto) {
+		case AMQPS_proto: {
+			sockfd = amqp_ssl_socket_new(cnn);
+
+			status = amqp_ssl_socket_set_cacert(sockfd, cacert_path.c_str());
+			if (status) {
+				throw AMQPException("AMQP cannot set CA certificate");
+			}
+
+			status = amqp_ssl_socket_set_key(sockfd, client_cert_path.c_str(), client_key_path.c_str());
+			if (status) {
+				throw AMQPException("AMQP cannot set client certificate or key");
+			}
+
+			amqp_ssl_socket_set_verify_peer(sockfd, verify_peer ? 1 : 0);
+			amqp_ssl_socket_set_verify_hostname(sockfd, verify_hostname ? 1 : 0);
+		}
+		break;
+
+		case AMQP_proto:
+		default:
+			sockfd = amqp_tcp_socket_new(cnn);
+			break;
 	}
 
-	//cout << "sockfd="<< sockfd  << "  pid=" <<  getpid() <<endl;
-	amqp_set_sockfd(cnn, sockfd);
+
+	status = amqp_socket_open(sockfd, host.c_str(), port);
+
+	if (status){
+		amqp_destroy_connection(cnn);
+		throw AMQPException("AMQP cannot create socket");
+	}
 }
 
 void AMQP::login() {
 	amqp_rpc_reply_t res = amqp_login(cnn, vhost.c_str(), 0, FRAME_MAX, 0, AMQP_SASL_METHOD_PLAIN, user.c_str(), password.c_str());
-	if ( res.reply_type == AMQP_RESPONSE_NORMAL)
-		return;
-
-	amqp_destroy_connection(cnn);
-	throw AMQPException(&res);
+	if ( res.reply_type != AMQP_RESPONSE_NORMAL) {
+		amqp_destroy_connection(cnn);
+		throw AMQPException(&res);
+	}
 }
 
 AMQPExchange * AMQP::createExchange() {
@@ -208,3 +262,4 @@ void AMQP::closeChannel() {
 		channels.pop_back();
 	}
 }
+

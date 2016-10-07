@@ -10,6 +10,7 @@
 #define __AMQPCPP
 
 #define AMQPPORT 5672
+#define AMQPSPORT 5671
 #define AMQPHOST "localhost"
 #define AMQPVHOST "/"
 #define AMQPLOGIN "guest"
@@ -43,6 +44,8 @@
 
 #include "amqp.h"
 #include "amqp_framing.h"
+#include "amqp_tcp_socket.h"
+#include "amqp_ssl_socket.h"
 
 #include <iostream>
 #include <vector>
@@ -58,6 +61,12 @@ class AMQPQueue;
 enum AMQPEvents_e {
 	AMQP_MESSAGE, AMQP_SIGUSR, AMQP_CANCEL, AMQP_CLOSE_CHANNEL
 };
+
+enum AMQPProto_e {
+	AMQP_proto, AMQPS_proto
+};
+
+#define SET_AMQP_PROTO_BY_SSL_USAGE(b) (b ? AMQPS_proto : AMQP_proto)
 
 class AMQPException : public std::exception {
 	string message;
@@ -265,22 +274,11 @@ class AMQPExchange : public AMQPBase {
 };
 
 class AMQP {
-	int port;
-	string host;
-	string vhost;
-	string user;
-	string password;
-	int sockfd;
-	int channelNumber;
-
-	amqp_connection_state_t cnn;
-	AMQPExchange * exchange;
-
-	vector<AMQPBase*> channels;
-
 	public:
 		AMQP();
-		AMQP(string cnnStr);
+		AMQP(string cnnStr, bool use_ssl_=false,
+				string cacert_path_="", string client_cert_path_="", string client_key_path_="",
+				bool verify_peer_=false, bool verify_hostname_=false);
 		~AMQP();
 
 		AMQPExchange * createExchange();
@@ -294,17 +292,38 @@ class AMQP {
 		void closeChannel();
 
 	private:
-		//AMQP& operator =(AMQP &ob);
-		AMQP( AMQP &ob );
-		void init();
-		void initDefault();
+		void init(enum AMQPProto_e proto);
+		void initDefault(enum AMQPProto_e proto);
 		void connect();
 		void parseCnnString(string cnnString );
 		void parseHostPort(string hostPortString );
 		void parseUserStr(string userString );
 		void sockConnect();
 		void login();
-		//void chanalConnect();
+
+
+
+		int port;
+		string host;
+		string vhost;
+		string user;
+		string password;
+		amqp_socket_t *sockfd;
+		int channelNumber;
+
+		amqp_connection_state_t cnn;
+		AMQPExchange * exchange;
+
+		bool use_ssl;
+		enum AMQPProto_e proto;
+		string cacert_path;
+		string client_cert_path;
+		string client_key_path;
+		bool verify_peer;
+		bool verify_hostname;
+
+		vector<AMQPBase*> channels;
 };
+
 
 #endif //__AMQPCPP

@@ -383,7 +383,7 @@ void AMQPQueue::setConsumerTag(string consumer_tag) {
 }
 
 void AMQPQueue::sendConsumeCommand() {
-	amqp_basic_consume_ok_t *consume_ok;
+//	amqp_basic_consume_ok_t *consume_ok;
 	amqp_bytes_t queueByte = amqp_cstring_bytes(name.c_str());
 
 	char error_message[256];
@@ -428,10 +428,11 @@ void AMQPQueue::sendConsumeCommand() {
 		throw AMQPException(error_message);
 	} else if (res.reply.id == AMQP_BASIC_CANCEL_OK_METHOD) {
 		return;//cancel ok
-	} else if (res.reply.id == AMQP_BASIC_CONSUME_OK_METHOD) {
-		consume_ok = (amqp_basic_consume_ok_t*) res.reply.decoded;
-		//printf("****** consume Ok c_tag=%s", consume_ok->consumer_tag.bytes );
 	}
+//		else if (res.reply.id == AMQP_BASIC_CONSUME_OK_METHOD) {
+//		consume_ok = (amqp_basic_consume_ok_t*) res.reply.decoded;
+//		//printf("****** consume Ok c_tag=%s", consume_ok->consumer_tag.bytes );
+//	}
 
 	auto_ptr<AMQPMessage> message ( new AMQPMessage(this) );
 	pmessage = message.get();
