@@ -257,7 +257,7 @@ void AMQPExchange::sendPublishCommand(amqp_bytes_t messageByte, const char * key
 	}
 
 	props.headers.num_entries = sHeadersSpecial.size();
-	amqp_table_entry_t_ entries[props.headers.num_entries];
+	amqp_table_entry_t_ *entries = (amqp_table_entry_t_*) malloc(sizeof(amqp_table_entry_t_) * props.headers.num_entries);
 
 	int i = 0;
 	map<string, string>::iterator it;
@@ -283,6 +283,8 @@ void AMQPExchange::sendPublishCommand(amqp_bytes_t messageByte, const char * key
 		&props,
 		messageByte
 	);
+	
+	free(entries);
 
         if ( 0 > res ) {
 		throw AMQPException("AMQP Publish Fail." );
