@@ -87,42 +87,34 @@ void AMQP::parseCnnString( string cnnString ) {
 	string hostPortStr, userPswString;
 	string::size_type pos = cnnString.find('@');
 
-	switch (pos) {
-		case 0:
-			hostPortStr.assign(cnnString, 1, string::npos);
-			AMQP::parseHostPort(hostPortStr);
-			user = AMQPLOGIN;
-			password = AMQPPSWD;
-		break;
-		case string::npos:
-			AMQP::parseHostPort(cnnString);
-			user = AMQPLOGIN;
-			password = AMQPPSWD;
-		break;
-		default :
-			hostPortStr.assign(cnnString, pos+1, string::npos);
-			userPswString.assign(cnnString, 0, pos);
-			AMQP::parseHostPort(hostPortStr);
-			AMQP::parseUserStr(userPswString );
-		break;
+	if (0 == pos) {
+		hostPortStr.assign(cnnString, 1, string::npos);
+		AMQP::parseHostPort(hostPortStr);
+		user = AMQPLOGIN;
+		password = AMQPPSWD;
+	} if (string::npos == pos) {
+		AMQP::parseHostPort(cnnString);
+		user = AMQPLOGIN;
+		password = AMQPPSWD;
+	} else {
+		hostPortStr.assign(cnnString, pos+1, string::npos);
+		userPswString.assign(cnnString, 0, pos);
+		AMQP::parseHostPort(hostPortStr);
+		AMQP::parseUserStr(userPswString );
 	}
 }
 
 void AMQP::parseUserStr(string userString) {
 	string::size_type pos = userString.find(':');
-	switch (pos) {
-		case 0:
-			user = AMQPLOGIN;
-			password.assign(userString, 1, string::npos);
-		break;
-		case string::npos:
-			user = userString;
-			password = AMQPPSWD;
-		break;
-		default:
-			user.assign(userString, 0, pos);
-			password.assign(userString, pos+1, string::npos);
-		break;
+	if (0 == pos) {
+		user = AMQPLOGIN;
+		password.assign(userString, 1, string::npos);
+	} if (string::npos == pos) {
+		user = userString;
+		password = AMQPPSWD;
+	} else {
+		user.assign(userString, 0, pos);
+		password.assign(userString, pos+1, string::npos);
 	}
 }
 
