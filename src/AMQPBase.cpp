@@ -8,6 +8,8 @@
 
 #include "AMQPcpp.h"
 
+using namespace std;
+
 AMQPBase::~AMQPBase() {
 	this->closeChannel();
 }

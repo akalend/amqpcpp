@@ -8,6 +8,8 @@
 
 #include "AMQPcpp.h"
 
+using namespace std;
+
 AMQP::AMQP() {
 	use_ssl = false;
 	proto = SET_AMQP_PROTO_BY_SSL_USAGE(use_ssl);
