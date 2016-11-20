@@ -92,7 +92,7 @@ void AMQP::parseCnnString( string cnnString ) {
 		AMQP::parseHostPort(hostPortStr);
 		user = AMQPLOGIN;
 		password = AMQPPSWD;
-	} if (string::npos == pos) {
+	} else if (string::npos == pos) {
 		AMQP::parseHostPort(cnnString);
 		user = AMQPLOGIN;
 		password = AMQPPSWD;
@@ -109,7 +109,7 @@ void AMQP::parseUserStr(string userString) {
 	if (0 == pos) {
 		user = AMQPLOGIN;
 		password.assign(userString, 1, string::npos);
-	} if (string::npos == pos) {
+	} else if (string::npos == pos) {
 		user = userString;
 		password = AMQPPSWD;
 	} else {
