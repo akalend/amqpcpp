@@ -8,6 +8,8 @@
 
 #include "AMQPcpp.h"
 
+using namespace std;
+
 AMQPMessage::AMQPMessage( AMQPQueue * queue ) {
 	this->queue=queue;
 	 message_count=-1;

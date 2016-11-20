@@ -8,6 +8,8 @@
 
 #include "AMQPcpp.h"
 
+using namespace std;
+
 AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum) {
 	this->cnn = cnn;
 	this->channelNum = channelNum;

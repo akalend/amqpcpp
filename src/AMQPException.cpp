@@ -8,6 +8,8 @@
 
 #include "AMQPcpp.h"
 
+using namespace std;
+
 AMQPException::AMQPException(string message) {
 	this->message= message;
 }
