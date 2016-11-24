@@ -26,7 +26,7 @@ AMQPException::AMQPException( amqp_rpc_reply_t * res) {
 
 	if( res->reply_type == AMQP_RESPONSE_SERVER_EXCEPTION) {
 		char buf[512];
-		bzero(buf,512);
+		memset(buf,0,512);
 		this->code = 0;
 
 		if(res->reply.id == AMQP_CONNECTION_CLOSE_METHOD) {

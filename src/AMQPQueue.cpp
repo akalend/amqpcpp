@@ -94,7 +94,7 @@ void AMQPQueue::sendDeclareCommand() {
 
 	amqp_release_buffers(*cnn);
 	char error_message [256];
-	bzero(error_message,256);
+	memset(error_message,0,256);
 
 	if (res.reply_type == AMQP_RESPONSE_NONE) {
 		throw AMQPException("error the QUEUE.DECLARE command, response none");
