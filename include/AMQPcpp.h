@@ -52,6 +52,9 @@
 #include <memory>
 #include <exception>
 
+#if __cplusplus > 199711L // C++11 or greater
+#include <functional>
+#endif
 //export AMQP;
 
 class AMQPQueue;
@@ -163,7 +166,11 @@ class AMQPBase {
 
 class AMQPQueue : public AMQPBase  {
 	protected:
+#if __cplusplus > 199711L // C++11 or greater
+                std::map< AMQPEvents_e, std::function<int(AMQPMessage*)> > events;
+#else
 		std::map< AMQPEvents_e, int(*)( AMQPMessage * ) > events;
+#endif
 		amqp_bytes_t consumer_tag;
 		uint32_t delivery_tag;
 		uint32_t count;
@@ -209,7 +216,9 @@ class AMQPQueue : public AMQPBase  {
 		amqp_bytes_t getConsumerTag();
 
 		void addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*) );
-
+#if __cplusplus > 199711L // C++11 or greater
+                void addEvent( AMQPEvents_e eventType, std::function<int(AMQPMessage*)>& event );
+#endif
 		virtual ~AMQPQueue();
 		
 		void Qos(uint32_t prefetch_size, uint16_t prefetch_count, amqp_boolean_t global );

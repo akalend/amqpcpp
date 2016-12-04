@@ -365,10 +365,23 @@ void AMQPQueue::sendGetCommand() {
 }
 
 void AMQPQueue::addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*)) {
-	if (events.find(eventType) != events.end())
-		throw AMQPException("the event alredy added");
+    #if __cplusplus > 199711L // C++11 or greater
+        std::function<int(AMQPMessage*)> callback = &(*event);
+        addEvent(eventType, callback);
+#else
+        if (events.find(eventType) != events.end())
+		throw AMQPException("event already added");
 	events[eventType] = reinterpret_cast< int(*)( AMQPMessage * ) > (event);
+#endif
 }
+
+#if __cplusplus > 199711L // C++11 or greater
+void AMQPQueue::addEvent( AMQPEvents_e eventType, std::function<int(AMQPMessage*)>& event) {
+	if (events.find(eventType) != events.end())
+		throw AMQPException("the event already added");
+	events[eventType] = event;
+}
+#endif
 
 void AMQPQueue::Consume() {
 	parms=0;
@@ -435,8 +448,11 @@ void AMQPQueue::sendConsumeCommand() {
 //		consume_ok = (amqp_basic_consume_ok_t*) res.reply.decoded;
 //		//printf("****** consume Ok c_tag=%s", consume_ok->consumer_tag.bytes );
 //	}
-
+#if __cplusplus > 199711L // C++11 or greater
+        unique_ptr<AMQPMessage> message ( new AMQPMessage(this) );
+#else
 	auto_ptr<AMQPMessage> message ( new AMQPMessage(this) );
+#endif
 	pmessage = message.get();
 
 	amqp_frame_t frame;
@@ -464,7 +480,11 @@ void AMQPQueue::sendConsumeCommand() {
 		if (frame.payload.method.id == AMQP_BASIC_CANCEL_OK_METHOD){
 			//cout << "CANCEL OK method.id="<< frame.payload.method.id << endl;
 			if ( events.find(AMQP_CANCEL) != events.end() ) {
+#if __cplusplus > 199711L // C++11 or greater
+                                events[AMQP_CANCEL](pmessage);
+#else                            
 				(*events[AMQP_CANCEL])(pmessage);
+#endif                                
 			}
 			break;
 		}
@@ -527,7 +547,12 @@ void AMQPQueue::sendConsumeCommand() {
 		free(buf);
 
 		if ( events.find(AMQP_MESSAGE) != events.end() ) {
+#if __cplusplus > 199711L // C++11 or greater
+                        int res = events[AMQP_MESSAGE](pmessage);
+#else                            
 			int res = (int)(*events[AMQP_MESSAGE])(pmessage);
+#endif 
+			
 			//cout << "res="<<res<<endl;
 			if (res) break;
 		}
