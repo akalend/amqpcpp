@@ -7,7 +7,7 @@ CPPFLAGS = $(CFLAGS)
 LIBS     =
 LIBS    += -lrabbitmq
 LIBS    += -lamqpcpp
-LIBS    += -lboost_thread
+LIBS    += -lboost_thread -lboost_system
         
 SOURCES  = producer.cpp 
 OBJECTS  = $(SOURCES:.cpp=.o)

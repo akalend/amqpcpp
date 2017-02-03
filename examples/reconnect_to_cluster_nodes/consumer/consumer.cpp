@@ -48,7 +48,7 @@ void handle() {
         protocol_t  protocol;
         while (pQ->get(protocol)) {
             counter++;
-            cout << protocol << endl;
+            std::cout << protocol << std::endl;
             //if (0 == counter % 1000) {
             //    cout << protocol << endl;
             //}

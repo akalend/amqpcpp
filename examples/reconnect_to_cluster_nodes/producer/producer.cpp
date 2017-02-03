@@ -84,7 +84,10 @@ void produce() {
 
 int main (int argc, char** argv) {
 
-    msg = std::string(argv[1]);
+    if (argc == 2)
+    	msg = std::string(argv[1]);
+    else
+	msg = "TEST";
 
     boost::thread_group threads;
 
