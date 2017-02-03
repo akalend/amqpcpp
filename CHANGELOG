@@ -1,5 +1,212 @@
-19.04.2010 the first commit
-20.04.2010 add the ack method
-28.04.2010 add properties header 
-12.05.2010 refactoring, add AMQPBase::setName()
-18.05.2011 moved source and example files to separate directories, modified makefile
+e110138 - Pavel Kuzmenko <kyzmenko.pavel@gmail.com>, 2017-02-03 : add autoconf
+4a0aaa1 - Pavel Kuzmenko <kyzmenko.pavel@gmail.com>, 2017-02-03 : update make file
+95e5648 - Pavel Kuzmenko <kyzmenko.pavel@gmail.com>, 2017-02-01 : update makefile
+5a9eaa4 - Alexandre <akalend@mail.ru>, 2016-12-13 : Merge pull request #55 from SeanEClarke/lamda_callback_update
+c29df84 - sean_clarke <sean.clarke@sec-consulting.co.uk>, 2016-12-04 : When C++11 support is detected C++11 lambdas/std::function<> objects can be used for addEvent callbacks. Existing functionality is maintained by wrapping the old style C function pointer in a std::function<> making this transparent to the user.
+ff5fa92 - Alexandre <akalend@mail.ru>, 2016-11-24 : Merge pull request #52 from cwruRobotics/code-portability
+2090a58 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Fix forgotten else
+0b63c81 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Allocate variable-size array
+d130195 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Replace bzero with memset
+2930200 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Stop using npos in switch case
+0b732ab - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Remove non-portable includes
+f12454b - Alexandre <akalend@mail.ru>, 2016-11-21 : Merge pull request #51 from cwruRobotics/move-using
+af3fdea - Michael Schaffer <ichaelm@case.edu>, 2016-11-20 : Merge pull request #1 from cwruRobotics/move-using
+2588322 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Move using directive out of header
+0673189 - Alexandre <akalend@mail.ru>, 2016-10-08 : Merge pull request #47 from aeppert/master
+7271e78 - Alexandre <akalend@mail.ru>, 2016-10-08 : Merge pull request #50 from bumbar1/fix/#49
+b816703 - bumbar1 <nejc.drascek@gmail.com>, 2016-10-07 : fix for setMessage, #49
+5c97cf5 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Removing compiler warning
+1bff825 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Fix
+c05d3c3 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Cleanup
+5668f86 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Make sure we link with ssl and crypto
+a61e8b0 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Refactoring…
+e5ccf57 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Cleanup
+a8519ab - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : rabbitmq-c changes
+6fd5657 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Tweak
+88ebd3b - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Refactoring - simplification
+924cbcc - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Continuing
+a5dd70d - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Cleanups
+4efd457 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Tweaks
+b621a08 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : More
+4f93464 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : More refactoring
+e67c7cb - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Proper C++…
+4dd0831 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Fix.
+c10cf50 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Initial SSL support and integration with newest rabbitmq-c
+713846d - Alexandre <akalend@mail.ru>, 2016-06-15 : Create AUTHORS
+164fc6c - Alexandre <akalend@mail.ru>, 2016-06-15 : Create LICENCE
+df58354 - Alexandre <akalend@mail.ru>, 2016-02-20 : Merge pull request #40 from jrohel/master
+46f68ff - Alexandre <akalend@mail.ru>, 2016-02-20 : Merge pull request #31 from maciekgajewski/AMQPException_fixes
+3c37d66 - Alexandre <akalend@mail.ru>, 2016-02-20 : Merge pull request #44 from kashyap2690/patch-1
+93ee899 - kashyap2690 <kashyap2690@gmail.com>, 2015-09-28 : Update AMQPQueue.cpp
+5858242 - Ing. Jaroslav Rohel <jaroslav.rohel@ais-brno.cz>, 2015-01-30 : Fix types. Optimalization.
+df14776 - Ing. Jaroslav Rohel <jaroslav.rohel@ais-brno.cz>, 2015-01-30 : Swap username and password in parseUsrStr. Userinfo is definen as amqp_userinfo  = username [ ":" password ] in AMQP URI.
+ee4ca56 - Ing. Jaroslav Rohel <jaroslav.rohel@ais-brno.cz>, 2015-01-30 : Fix memory leak in method for send binary messages. Remove const in declaration.
+9c049ed - Maciek Gajewski <maciej.gajewski0@gmail.com>, 2013-12-31 : ok, my bad...
+d81b205 - Maciek Gajewski <maciej.gajewski0@gmail.com>, 2013-12-31 : More whitespacing...
+60dec1b - Maciek Gajewski <maciej.gajewski0@gmail.com>, 2013-12-31 : Whitespace fixed to match the rest of the code
+c3d0752 - Maciek Gajewski <maciej.gajewski0@gmail.com>, 2013-12-31 : Some fixes and new functionality to the exception class
+ddfdfdf - lufeng <amuseme.lu@gmail.com>, 2013-02-15 : Merge pull request #29 from napylov/patch-1
+86382a0 - napylov <napylov@mail.ru>, 2013-02-14 : Update src/AMQPExchange.cpp
+4b2b0e5 - napylov <napylov@mail.ru>, 2013-02-14 : Update include/AMQPcpp.h
+f647e28 - Vasiliy <vasiliy@Vasiliy.(none)>, 2012-12-27 : Add method for send binary messages
+4fd37ce - Vasiliy <vasiliy@Vasiliy.(none)>, 2012-12-18 : change strdup to memcpy, because strdup can't duplicate binary data
+f90eed2 - vasiliy-briginets <vasiliy.briginets@gmail.com>, 2012-12-17 : Merge pull request #27 from vasiliy-briginets/master
+a5f3903 - Vasiliy <vasiliy@Vasiliy.(none)>, 2012-12-17 : initializing a variable s of struct amqp_basic_consume_t in method AMQPQueue::sendConsumeCommand to zero
+0129bac - Vasiliy <vasiliy@Vasiliy.(none)>, 2012-12-17 : fix parsing of virtaul host
+93a25c9 - Alexandre <akalend@mail.ru>, 2012-11-23 : Merge pull request #26 from MiLk/master
+9392d92 - MiLk <hello@emilienkenler.com>, 2012-11-23 : Qos is member of AMQPQueue and not AMQPMessage
+d930a3d - Alexandre <akalend@mail.ru>, 2012-11-22 : Merge pull request #25 from dennislee1201/master
+4d7c252 - Alexandre <akalend@mail.ru>, 2012-11-19 : Merge pull request #24 from rasecoiac03/master
+525d653 - Caio <caio.cesar@tivit.com.br>, 2012-11-19 : additional headers
+69116ca - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Add Makefile and SynchronizedQueue.h in consumer folder.
+ef41714 - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Add consumer.cpp
+4987b19 - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Try to add a demo folder.
+4a25c9d - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Try to add a demo folder.
+9b9ee1c - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Try to add a demo folder.
+b5d0062 - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #20 from dennislee1201/patch-2
+e4be2cd - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #21 from dennislee1201/patch-3
+5fd03a8 - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #22 from dennislee1201/patch-4
+9b85c16 - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #23 from dennislee1201/patch-5
+4361720 - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #19 from dennislee1201/patch-1
+e762e3e - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update src/AMQPQueue.cpp
+29096a2 - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update include/AMQPcpp.h
+c7ca0fd - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update src/AMQPMessage.cpp
+c4c7f0c - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update src/AMQPExchange.cpp
+685a9b0 - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update src/AMQPExchange.cpp
+a836f8b - chenyujian <lwice04@gmail.com>, 2012-07-31 : Update examples/example_get.cpp
+ae9fd27 - chenyujian <lwice04@gmail.com>, 2012-07-31 : Update examples/example_consume.cpp
+a490137 - chenyujian <lwice04@gmail.com>, 2012-07-31 : Update src/AMQPQueue.cpp
+30a2539 - lufeng <amuseme.lu@gmail.com>, 2012-07-10 : Merge pull request #12 from lufeng1102/master
+817731f - lufeng1102 <amuseme.lu@gmail.com>, 2012-07-10 : change rabbitmq-c repo address
+bf9116c - lufeng1102 <amuseme.lu@gmail.com>, 2012-07-10 : change rabbitmq-c repo address
+7d6d490 - lufeng <amuseme.lu@gmail.com>, 2012-06-01 : Merge pull request #10 from jerrybao/master
+76dc998 - jerrybao <hijerrybao@gmail.com>, 2012-05-10 : Clean up connection if login fails.
+cb1e9ef - lufeng <amuseme.lu@gmail.com>, 2012-04-18 : Merge pull request #9 from jerrybao/master
+b69b94f - jerrybao <hijerrybao@gmail.com>, 2012-04-17 : *value = 17857167783900549480, ivalue with type long long int will be -589576289809002136
+bc92655 - lufeng <amuseme.lu@gmail.com>, 2012-04-11 : Merge pull request #8 from jerrybao/master
+1847aa3 - jerrybao <hijerrybao@gmail.com>, 2012-04-11 : Signed-off-by: jerrybao <hijerrybao@gmail.com>
+b8bfcdf - lufeng <amuseme.lu@gmail.com>, 2012-02-26 : Merge pull request #7 from lufeng1102/master
+c9b7444 - lufeng <amuseme.lu@gmail.com>, 2012-02-26 : add return message length for AMQPMessage getMessage method
+9e44cfb - lufeng <amuseme.lu@gmail.com>, 2012-02-26 : add return message length for AMQPMessage getMessage method
+20b20da - lufeng <amuseme.lu@gmail.com>, 2012-02-26 : add return message length for AMQPMessage getMessage method
+4c93efd - lufeng <amuseme.lu@gmail.com>, 2012-02-25 : add ~ file ignore
+5481766 - lufeng <amuseme.lu@gmail.com>, 2012-02-25 : fix Makefile example compile problem
+31edeca - lufeng <amuseme.lu@gmail.com>, 2012-02-25 : add ignore file patter
+adc8c12 - xbojer <fbojer@gmail.com>, 2011-11-29 : Merge pull request #4 from negram/master
+4cb7964 - Mikhail Galanin <galanin@corp.mail.ru>, 2011-11-30 : Removed GCC's warning: format «%lld» expects argument of type «long long int», but argument 3 has type «uint64_t {aka long unsigned int}» [-Wformat]
+4912490 - Mikhail Galanin <galanin@corp.mail.ru>, 2011-11-30 : removed direct constructors call that latest versions of GCC consider as a mistake
+80b1737 - xbojer <fbojer@gmail.com>, 2011-05-27 : Removed local includes from makefile
+6579f01 - xbojer <fbojer@gmail.com>, 2011-05-18 : revert test changes
+32dca82 - Michal Bojarski <fbojer@gmail.com>, 2011-05-18 : moved source and example files to separate directories, modified makefile, small fixes for warnings
+9d575bc - xbojer <fbojer@gmail.com>, 2011-05-04 : Merge pull request #3 from ryanshow/master
+706acab - Ryan Showalter <ryan@bixly.com>, 2011-05-04 : Fix a lot of misc errors to get examples working with rabbitmq
+2b8089e - xbojer <fbojer@gmail.com>, 2011-04-20 : newline at end of makefile (for solaris make)
+8376446 - Michal Bojarski <fbojer@gmail.com>, 2011-04-15 : merge
+8c8603c - Michal Bojarski <fbojer@gmail.com>, 2011-04-14 : Modify code to work with actual rabbitmq-c and fixing some bugf for compilation under gnu c++ compiler
+94cd90f - akalend <akalend@mail.ru>, 2010-05-14 : first commitaaad1c3 - Pavel Kuzmenko <kyzmenko.pavel@gmail.com>, 2017-02-03 : update AUTHORS & CHANGELOG
+e110138 - Pavel Kuzmenko <kyzmenko.pavel@gmail.com>, 2017-02-03 : add autoconf
+4a0aaa1 - Pavel Kuzmenko <kyzmenko.pavel@gmail.com>, 2017-02-03 : update make file
+95e5648 - Pavel Kuzmenko <kyzmenko.pavel@gmail.com>, 2017-02-01 : update makefile
+5a9eaa4 - Alexandre <akalend@mail.ru>, 2016-12-13 : Merge pull request #55 from SeanEClarke/lamda_callback_update
+c29df84 - sean_clarke <sean.clarke@sec-consulting.co.uk>, 2016-12-04 : When C++11 support is detected C++11 lambdas/std::function<> objects can be used for addEvent callbacks. Existing functionality is maintained by wrapping the old style C function pointer in a std::function<> making this transparent to the user.
+ff5fa92 - Alexandre <akalend@mail.ru>, 2016-11-24 : Merge pull request #52 from cwruRobotics/code-portability
+2090a58 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Fix forgotten else
+0b63c81 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Allocate variable-size array
+d130195 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Replace bzero with memset
+2930200 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Stop using npos in switch case
+0b732ab - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Remove non-portable includes
+f12454b - Alexandre <akalend@mail.ru>, 2016-11-21 : Merge pull request #51 from cwruRobotics/move-using
+af3fdea - Michael Schaffer <ichaelm@case.edu>, 2016-11-20 : Merge pull request #1 from cwruRobotics/move-using
+2588322 - Michael Schaffer <mls278@case.edu>, 2016-11-20 : Move using directive out of header
+0673189 - Alexandre <akalend@mail.ru>, 2016-10-08 : Merge pull request #47 from aeppert/master
+7271e78 - Alexandre <akalend@mail.ru>, 2016-10-08 : Merge pull request #50 from bumbar1/fix/#49
+b816703 - bumbar1 <nejc.drascek@gmail.com>, 2016-10-07 : fix for setMessage, #49
+5c97cf5 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Removing compiler warning
+1bff825 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Fix
+c05d3c3 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Cleanup
+5668f86 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Make sure we link with ssl and crypto
+a61e8b0 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Refactoring…
+e5ccf57 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Cleanup
+a8519ab - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : rabbitmq-c changes
+6fd5657 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Tweak
+88ebd3b - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Refactoring - simplification
+924cbcc - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Continuing
+a5dd70d - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Cleanups
+4efd457 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Tweaks
+b621a08 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : More
+4f93464 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : More refactoring
+e67c7cb - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Proper C++…
+4dd0831 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Fix.
+c10cf50 - Aaron Eppert <aaron.eppert@packetsled.com>, 2016-08-04 : Initial SSL support and integration with newest rabbitmq-c
+713846d - Alexandre <akalend@mail.ru>, 2016-06-15 : Create AUTHORS
+164fc6c - Alexandre <akalend@mail.ru>, 2016-06-15 : Create LICENCE
+df58354 - Alexandre <akalend@mail.ru>, 2016-02-20 : Merge pull request #40 from jrohel/master
+46f68ff - Alexandre <akalend@mail.ru>, 2016-02-20 : Merge pull request #31 from maciekgajewski/AMQPException_fixes
+3c37d66 - Alexandre <akalend@mail.ru>, 2016-02-20 : Merge pull request #44 from kashyap2690/patch-1
+93ee899 - kashyap2690 <kashyap2690@gmail.com>, 2015-09-28 : Update AMQPQueue.cpp
+5858242 - Ing. Jaroslav Rohel <jaroslav.rohel@ais-brno.cz>, 2015-01-30 : Fix types. Optimalization.
+df14776 - Ing. Jaroslav Rohel <jaroslav.rohel@ais-brno.cz>, 2015-01-30 : Swap username and password in parseUsrStr. Userinfo is definen as amqp_userinfo  = username [ ":" password ] in AMQP URI.
+ee4ca56 - Ing. Jaroslav Rohel <jaroslav.rohel@ais-brno.cz>, 2015-01-30 : Fix memory leak in method for send binary messages. Remove const in declaration.
+9c049ed - Maciek Gajewski <maciej.gajewski0@gmail.com>, 2013-12-31 : ok, my bad...
+d81b205 - Maciek Gajewski <maciej.gajewski0@gmail.com>, 2013-12-31 : More whitespacing...
+60dec1b - Maciek Gajewski <maciej.gajewski0@gmail.com>, 2013-12-31 : Whitespace fixed to match the rest of the code
+c3d0752 - Maciek Gajewski <maciej.gajewski0@gmail.com>, 2013-12-31 : Some fixes and new functionality to the exception class
+ddfdfdf - lufeng <amuseme.lu@gmail.com>, 2013-02-15 : Merge pull request #29 from napylov/patch-1
+86382a0 - napylov <napylov@mail.ru>, 2013-02-14 : Update src/AMQPExchange.cpp
+4b2b0e5 - napylov <napylov@mail.ru>, 2013-02-14 : Update include/AMQPcpp.h
+f647e28 - Vasiliy <vasiliy@Vasiliy.(none)>, 2012-12-27 : Add method for send binary messages
+4fd37ce - Vasiliy <vasiliy@Vasiliy.(none)>, 2012-12-18 : change strdup to memcpy, because strdup can't duplicate binary data
+f90eed2 - vasiliy-briginets <vasiliy.briginets@gmail.com>, 2012-12-17 : Merge pull request #27 from vasiliy-briginets/master
+a5f3903 - Vasiliy <vasiliy@Vasiliy.(none)>, 2012-12-17 : initializing a variable s of struct amqp_basic_consume_t in method AMQPQueue::sendConsumeCommand to zero
+0129bac - Vasiliy <vasiliy@Vasiliy.(none)>, 2012-12-17 : fix parsing of virtaul host
+93a25c9 - Alexandre <akalend@mail.ru>, 2012-11-23 : Merge pull request #26 from MiLk/master
+9392d92 - MiLk <hello@emilienkenler.com>, 2012-11-23 : Qos is member of AMQPQueue and not AMQPMessage
+d930a3d - Alexandre <akalend@mail.ru>, 2012-11-22 : Merge pull request #25 from dennislee1201/master
+4d7c252 - Alexandre <akalend@mail.ru>, 2012-11-19 : Merge pull request #24 from rasecoiac03/master
+525d653 - Caio <caio.cesar@tivit.com.br>, 2012-11-19 : additional headers
+69116ca - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Add Makefile and SynchronizedQueue.h in consumer folder.
+ef41714 - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Add consumer.cpp
+4987b19 - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Try to add a demo folder.
+4a25c9d - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Try to add a demo folder.
+9b9ee1c - Dennis Lee <dennislee1201@gmail.com>, 2012-11-15 : Try to add a demo folder.
+b5d0062 - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #20 from dennislee1201/patch-2
+e4be2cd - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #21 from dennislee1201/patch-3
+5fd03a8 - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #22 from dennislee1201/patch-4
+9b85c16 - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #23 from dennislee1201/patch-5
+4361720 - Alexandre <akalend@mail.ru>, 2012-11-11 : Merge pull request #19 from dennislee1201/patch-1
+e762e3e - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update src/AMQPQueue.cpp
+29096a2 - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update include/AMQPcpp.h
+c7ca0fd - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update src/AMQPMessage.cpp
+c4c7f0c - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update src/AMQPExchange.cpp
+685a9b0 - dennislee1201 <dennislee1201@gmail.com>, 2012-11-12 : Update src/AMQPExchange.cpp
+a836f8b - chenyujian <lwice04@gmail.com>, 2012-07-31 : Update examples/example_get.cpp
+ae9fd27 - chenyujian <lwice04@gmail.com>, 2012-07-31 : Update examples/example_consume.cpp
+a490137 - chenyujian <lwice04@gmail.com>, 2012-07-31 : Update src/AMQPQueue.cpp
+30a2539 - lufeng <amuseme.lu@gmail.com>, 2012-07-10 : Merge pull request #12 from lufeng1102/master
+817731f - lufeng1102 <amuseme.lu@gmail.com>, 2012-07-10 : change rabbitmq-c repo address
+bf9116c - lufeng1102 <amuseme.lu@gmail.com>, 2012-07-10 : change rabbitmq-c repo address
+7d6d490 - lufeng <amuseme.lu@gmail.com>, 2012-06-01 : Merge pull request #10 from jerrybao/master
+76dc998 - jerrybao <hijerrybao@gmail.com>, 2012-05-10 : Clean up connection if login fails.
+cb1e9ef - lufeng <amuseme.lu@gmail.com>, 2012-04-18 : Merge pull request #9 from jerrybao/master
+b69b94f - jerrybao <hijerrybao@gmail.com>, 2012-04-17 : *value = 17857167783900549480, ivalue with type long long int will be -589576289809002136
+bc92655 - lufeng <amuseme.lu@gmail.com>, 2012-04-11 : Merge pull request #8 from jerrybao/master
+1847aa3 - jerrybao <hijerrybao@gmail.com>, 2012-04-11 : Signed-off-by: jerrybao <hijerrybao@gmail.com>
+b8bfcdf - lufeng <amuseme.lu@gmail.com>, 2012-02-26 : Merge pull request #7 from lufeng1102/master
+c9b7444 - lufeng <amuseme.lu@gmail.com>, 2012-02-26 : add return message length for AMQPMessage getMessage method
+9e44cfb - lufeng <amuseme.lu@gmail.com>, 2012-02-26 : add return message length for AMQPMessage getMessage method
+20b20da - lufeng <amuseme.lu@gmail.com>, 2012-02-26 : add return message length for AMQPMessage getMessage method
+4c93efd - lufeng <amuseme.lu@gmail.com>, 2012-02-25 : add ~ file ignore
+5481766 - lufeng <amuseme.lu@gmail.com>, 2012-02-25 : fix Makefile example compile problem
+31edeca - lufeng <amuseme.lu@gmail.com>, 2012-02-25 : add ignore file patter
+adc8c12 - xbojer <fbojer@gmail.com>, 2011-11-29 : Merge pull request #4 from negram/master
+4cb7964 - Mikhail Galanin <galanin@corp.mail.ru>, 2011-11-30 : Removed GCC's warning: format «%lld» expects argument of type «long long int», but argument 3 has type «uint64_t {aka long unsigned int}» [-Wformat]
+4912490 - Mikhail Galanin <galanin@corp.mail.ru>, 2011-11-30 : removed direct constructors call that latest versions of GCC consider as a mistake
+80b1737 - xbojer <fbojer@gmail.com>, 2011-05-27 : Removed local includes from makefile
+6579f01 - xbojer <fbojer@gmail.com>, 2011-05-18 : revert test changes
+32dca82 - Michal Bojarski <fbojer@gmail.com>, 2011-05-18 : moved source and example files to separate directories, modified makefile, small fixes for warnings
+9d575bc - xbojer <fbojer@gmail.com>, 2011-05-04 : Merge pull request #3 from ryanshow/master
+706acab - Ryan Showalter <ryan@bixly.com>, 2011-05-04 : Fix a lot of misc errors to get examples working with rabbitmq
+2b8089e - xbojer <fbojer@gmail.com>, 2011-04-20 : newline at end of makefile (for solaris make)
+8376446 - Michal Bojarski <fbojer@gmail.com>, 2011-04-15 : merge
+8c8603c - Michal Bojarski <fbojer@gmail.com>, 2011-04-14 : Modify code to work with actual rabbitmq-c and fixing some bugf for compilation under gnu c++ compiler
+94cd90f - akalend <akalend@mail.ru>, 2010-05-14 : first commit
