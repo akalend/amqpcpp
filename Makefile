@@ -6,7 +6,7 @@ HEADERS = $(shell echo include/*.h)
 CPPFLAGS = $(CFLAGS) -I/usr/local/include -Iinclude -L/usr/local/lib
 
 LIBRARIES= rabbitmq ssl crypto
-LIBS     = $(addprefix -l,$(LIBRARIES))
+LIBS     = $(addprefix -l,$(LIBRARIES)) $(shell pkg-config --libs librabbitmq)
 
 LIBNAME  = amqpcpp
 LIBFILE  = lib$(LIBNAME).a
