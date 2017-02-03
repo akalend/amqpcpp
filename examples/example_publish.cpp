@@ -7,11 +7,7 @@ int main (int argc, char** argv) {
 
 
 	try {
-//		AMQP amqp;
-//		AMQP amqp(AMQPDEBUG);
-	
-		AMQP amqp("123123:akalend@localhost:5673/private");		// all connect string
-
+		AMQP amqp("test:test@localhost:5672//");
 		AMQPExchange * ex = amqp.createExchange("e");
 		ex->Declare("e", "fanout");
 
@@ -20,13 +16,6 @@ int main (int argc, char** argv) {
 		qu2->Bind( "e", "");		
 
 		string ss = "message 1 ";
-		/* test very long message
-		ss = ss+ss+ss+ss+ss+ss+ss;
-		ss += ss+ss+ss+ss+ss+ss+ss;
-		ss += ss+ss+ss+ss+ss+ss+ss;
-		ss += ss+ss+ss+ss+ss+ss+ss;
-		ss += ss+ss+ss+ss+ss+ss+ss;
-*/
 
 		ex->setHeader("Delivery-mode", 2);
 		ex->setHeader("Content-type", "text/text");
@@ -37,11 +26,6 @@ int main (int argc, char** argv) {
 		ex->Publish(  "message 2 " , "");
 		ex->Publish(  "message 3 " , "");
 		
-		
-		if (argc==2) {
-			AMQPQueue * qu = amqp.createQueue();			
-			qu->Cancel(   amqp_cstring_bytes(argv[1]) );
-		}												
 						
 	} catch (AMQPException e) {
 		std::cout << e.getMessage() << std::endl;
