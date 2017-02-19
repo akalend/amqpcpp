@@ -192,8 +192,12 @@ void AMQP::sockConnect() {
 				throw AMQPException("AMQP cannot set client certificate or key");
 			}
 
+#if AMQP_VERSION_MINOR == 4
+			amqp_ssl_socket_set_verify(sockfd, verify_peer ? 1 : 0);
+#else
 			amqp_ssl_socket_set_verify_peer(sockfd, verify_peer ? 1 : 0);
 			amqp_ssl_socket_set_verify_hostname(sockfd, verify_hostname ? 1 : 0);
+#endif
 		}
 		break;
 
