@@ -68,13 +68,14 @@ void AMQPExchange::sendDeclareCommand() {
 	args.entries = NULL;
 
 	amqp_boolean_t passive =	(parms & AMQP_PASSIVE)		? 1:0;
-	amqp_boolean_t autodelete = (parms & AMQP_AUTODELETE)	? 1:0;
 	amqp_boolean_t durable =	(parms & AMQP_DURABLE)		? 1:0;
-	amqp_boolean_t internal = 0;
 
 #if AMQP_VERSION_MINOR == 4
 	amqp_exchange_declare(*cnn, (amqp_channel_t) 1, exchange, exchangetype, passive, durable, args );
 #else
+	amqp_boolean_t autodelete = (parms & AMQP_AUTODELETE)	? 1:0;
+	amqp_boolean_t internal = 0;
+
 	amqp_exchange_declare(*cnn, (amqp_channel_t) 1, exchange, exchangetype, passive, durable, autodelete, internal, args );
 #endif
 
