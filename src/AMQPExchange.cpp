@@ -72,8 +72,11 @@ void AMQPExchange::sendDeclareCommand() {
 	amqp_boolean_t durable =	(parms & AMQP_DURABLE)		? 1:0;
 	amqp_boolean_t internal = 0;
 
+#if AMQP_VERSION_MINOR == 4
+	amqp_exchange_declare(*cnn, (amqp_channel_t) 1, exchange, exchangetype, passive, durable, args );
+#else
 	amqp_exchange_declare(*cnn, (amqp_channel_t) 1, exchange, exchangetype, passive, durable, autodelete, internal, args );
-	//amqp_exchange_declare(*cnn, (amqp_channel_t) 1, exchange, exchangetype, passive, durable, args );
+#endif
 
 	amqp_rpc_reply_t res =amqp_get_rpc_reply(*cnn);
 
