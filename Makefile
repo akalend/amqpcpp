@@ -28,5 +28,14 @@ $(LIBSO): $(OBJECTS)
 $(EXAMPLES): $(addprefix examples/,$(EXFILES)) $(LIBFILE)
 	$(CXX) $(CPPFLAGS) -o $@ examples/$@.cpp $(LIBFILE) $(LIBS)
 
+install:
+	cp $(LIBSO) /usr/local/lib
+	ldconfig
+	cp include/* /usr/local/include/
+	
+uninstall:
+	rm /usr/local/lib/$(LIBSO)
+	rm /usr/local/include/AMQPcpp.h
+	
 clean:
 	rm -f $(OBJECTS) $(EXAMPLES) $(LIBFILE) $(LIBSO)
