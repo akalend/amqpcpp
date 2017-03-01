@@ -4,3 +4,4 @@ example_publish
 libamqpcpp.a
 *.o
 *~
+*.so
