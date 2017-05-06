@@ -7,6 +7,7 @@ LIBS     = $(addprefix -l,$(LIBRARIES))
 
 LIBNAME  = amqpcpp
 LIBFILE  = lib$(LIBNAME).a
+LIBSO    = lib$(LIBNAME).so
 
 SOURCES  = src/AMQP.cpp src/AMQPBase.cpp src/AMQPException.cpp src/AMQPMessage.cpp src/AMQPExchange.cpp src/AMQPQueue.cpp
 EXFILES  = example_publish.cpp example_consume.cpp example_get.cpp
@@ -16,13 +17,25 @@ OBJECTS  = $(SOURCES:.cpp=.o)
 
 all: lib $(EXAMPLES)
 
-lib: $(LIBFILE)
+lib: $(LIBFILE) $(LIBSO)
 
 $(LIBFILE): $(OBJECTS)
 	$(AR) rcs $@ $(OBJECTS)
 
+$(LIBSO): $(OBJECTS)
+	$(CXX) $(CPPFLAGS) -fPIC -shared $(SOURCES) -o $(LIBSO)
+	
 $(EXAMPLES): $(addprefix examples/,$(EXFILES)) $(LIBFILE)
 	$(CXX) $(CPPFLAGS) -o $@ examples/$@.cpp $(LIBFILE) $(LIBS)
 
+install:
+	cp $(LIBSO) /usr/local/lib
+	ldconfig
+	cp include/* /usr/local/include/
+	
+uninstall:
+	rm /usr/local/lib/$(LIBSO)
+	rm /usr/local/include/AMQPcpp.h
+	
 clean:
-	rm -f $(OBJECTS) $(EXAMPLES) $(LIBFILE)
+	rm -f $(OBJECTS) $(EXAMPLES) $(LIBFILE) $(LIBSO)
