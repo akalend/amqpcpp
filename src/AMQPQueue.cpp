@@ -448,12 +448,11 @@ void AMQPQueue::sendConsumeCommand() {
 //		consume_ok = (amqp_basic_consume_ok_t*) res.reply.decoded;
 //		//printf("****** consume Ok c_tag=%s", consume_ok->consumer_tag.bytes );
 //	}
-#if __cplusplus > 199711L // C++11 or greater
-        unique_ptr<AMQPMessage> message ( new AMQPMessage(this) );
-#else
-	auto_ptr<AMQPMessage> message ( new AMQPMessage(this) );
-#endif
-	pmessage = message.get();
+
+	if (pmessage)
+		delete(pmessage);
+
+	pmessage = new AMQPMessage(this);
 
 	amqp_frame_t frame;
 	char * buf=NULL, *pbuf = NULL;
