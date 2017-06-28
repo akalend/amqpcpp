@@ -66,7 +66,7 @@ void consume() {
         std::stringstream ss;
         ss << "guest:guest@localhost:" << ports[rand() % 3];
 
-        AMQP amqp(ss.str());
+        AMQP amqp(ss.str(), 60);
 
         AMQPQueue * queue = amqp.createQueue("hello-queue");
         queue->Declare();

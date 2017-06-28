@@ -18,9 +18,10 @@ AMQP::AMQP() {
 	AMQP::connect();
 };
 
-AMQP::AMQP(string cnnStr, bool use_ssl_,
+AMQP::AMQP(string cnnStr, int hb, bool use_ssl_,
 		string cacert_path_, string client_cert_path_, string client_key_path_,
 		bool verify_peer_, bool verify_hostname_) {
+	heart_beat = hb;
 	use_ssl = use_ssl_;
 	proto = SET_AMQP_PROTO_BY_SSL_USAGE(use_ssl);
 	cacert_path = cacert_path_;
@@ -217,7 +218,7 @@ void AMQP::sockConnect() {
 }
 
 void AMQP::login() {
-	amqp_rpc_reply_t res = amqp_login(cnn, vhost.c_str(), 0, FRAME_MAX, 0, AMQP_SASL_METHOD_PLAIN, user.c_str(), password.c_str());
+	amqp_rpc_reply_t res = amqp_login(cnn, vhost.c_str(), 0, FRAME_MAX, heart_beat, AMQP_SASL_METHOD_PLAIN, user.c_str(), password.c_str());
 	if ( res.reply_type != AMQP_RESPONSE_NORMAL) {
 		amqp_destroy_connection(cnn);
 		throw AMQPException(&res);

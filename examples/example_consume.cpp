@@ -34,7 +34,7 @@ int main () {
 	try {
 //		AMQP amqp("123123:akalend@localhost/private");
 
-		AMQP amqp("123123:akalend@localhost:5673/private");
+		AMQP amqp("123123:akalend@localhost:5673/private", 60);
 
 		AMQPQueue * qu2 = amqp.createQueue("q2");
 
