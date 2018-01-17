@@ -180,7 +180,12 @@ void AMQPExchange::sendBindCommand(const char * queue, const char * key){
 }
 
 void AMQPExchange::Publish(string message, string key) {
-	sendPublishCommand(amqp_cstring_bytes(message.c_str()), key.c_str());
+	if (message.size() > 0) {
+		Publish(&message[0], message.size(), key);
+	}
+	else {
+		Publish(nullptr, 0, key);
+	}
 }
 
 void AMQPExchange::Publish(char * data, uint32_t length, string key) {
@@ -293,7 +298,7 @@ void AMQPExchange::sendPublishCommand(amqp_bytes_t messageByte, const char * key
 	
 	free(entries);
 
-        if ( 0 > res ) {
+	if ( 0 > res ) {
 		throw AMQPException("AMQP Publish Fail." );
 	}
 }
