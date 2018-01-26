@@ -57,9 +57,6 @@ void AMQPQueue::Declare(string name, short parms) {
 }
 
 void AMQPQueue::sendDeclareCommand() {
-	if (!name.size())
-		throw AMQPException("the queue must to have the name");
-
 	amqp_bytes_t queue_name = amqp_cstring_bytes(name.c_str());
 
 	/*
