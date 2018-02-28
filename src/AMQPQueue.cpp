@@ -266,6 +266,10 @@ void AMQPQueue::sendGetCommand() {
 		throw AMQPException("error the Get command, response none");
 	}
 
+	if ( res.reply_type == AMQP_RESPONSE_LIBRARY_EXCEPTION) {
+		throw AMQPException(&res);
+	}
+
 	if ( res.reply.id == AMQP_CHANNEL_CLOSE_METHOD ) {
 		amqp_channel_close_t * err = (amqp_channel_close_t *) res.reply.decoded;
 
