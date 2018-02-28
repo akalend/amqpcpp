@@ -670,6 +670,27 @@ void AMQPQueue::sendAckCommand() {
 	amqp_send_method(*cnn, channelNum, AMQP_BASIC_ACK_METHOD, &s);
 }
 
+void AMQPQueue::Reject(bool requeue) {
+	if (!delivery_tag)
+		throw AMQPException("the delivery tag not set");
+
+	sendRejectCommand(requeue);
+}
+
+void AMQPQueue::Reject(uint32_t delivery_tag, bool requeue) {
+	this->delivery_tag = delivery_tag;
+
+	sendRejectCommand(requeue);
+}
+
+void AMQPQueue::sendRejectCommand(bool requeue) {
+	amqp_basic_reject_t s;
+	s.delivery_tag = delivery_tag;
+	s.requeue = requeue ? 1 : 0;
+
+	amqp_send_method(*cnn, channelNum, AMQP_BASIC_REJECT_METHOD, &s);
+}
+
 void AMQPQueue::Qos(
         uint32_t prefetch_size,
         uint16_t prefetch_count,

@@ -204,6 +204,9 @@ class AMQPQueue : public AMQPBase  {
 		void Ack();
 		void Ack(uint32_t delivery_tag);
 
+		void Reject(bool requeue);
+		void Reject(uint32_t delivery_tag, bool requeue);
+
 		AMQPMessage * getMessage() {
 			return pmessage;
 		}
@@ -232,6 +235,7 @@ class AMQPQueue : public AMQPBase  {
 		void sendConsumeCommand();
 		void sendCancelCommand();
 		void sendAckCommand();
+		void sendRejectCommand(bool requeue);
 		void setHeaders(amqp_basic_properties_t * p);
 };
 
