@@ -302,6 +302,10 @@ class AMQP {
 
 		void closeChannel();
 
+        amqp_connection_state_t getConnectionState() {
+            return cnn;
+        }
+
 	private:
 		void init(enum AMQPProto_e proto);
 		void initDefault(enum AMQPProto_e proto);
