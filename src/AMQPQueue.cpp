@@ -365,7 +365,7 @@ void AMQPQueue::sendGetCommand() {
 }
 
 void AMQPQueue::addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*)) {
-    #if __cplusplus > 199711L // C++11 or greater
+#if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
         std::function<int(AMQPMessage*)> callback = &(*event);
         addEvent(eventType, callback);
 #else
@@ -375,7 +375,7 @@ void AMQPQueue::addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*)) {
 #endif
 }
 
-#if __cplusplus > 199711L // C++11 or greater
+#if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
 void AMQPQueue::addEvent( AMQPEvents_e eventType, std::function<int(AMQPMessage*)>& event) {
 	if (events.find(eventType) != events.end())
 		throw AMQPException("the event already added");
@@ -448,7 +448,7 @@ void AMQPQueue::sendConsumeCommand() {
 //		consume_ok = (amqp_basic_consume_ok_t*) res.reply.decoded;
 //		//printf("****** consume Ok c_tag=%s", consume_ok->consumer_tag.bytes );
 //	}
-#if __cplusplus > 199711L // C++11 or greater
+#if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
         unique_ptr<AMQPMessage> message ( new AMQPMessage(this) );
 #else
 	auto_ptr<AMQPMessage> message ( new AMQPMessage(this) );
@@ -480,7 +480,7 @@ void AMQPQueue::sendConsumeCommand() {
 		if (frame.payload.method.id == AMQP_BASIC_CANCEL_OK_METHOD){
 			//cout << "CANCEL OK method.id="<< frame.payload.method.id << endl;
 			if ( events.find(AMQP_CANCEL) != events.end() ) {
-#if __cplusplus > 199711L // C++11 or greater
+#if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
                                 events[AMQP_CANCEL](pmessage);
 #else                            
 				(*events[AMQP_CANCEL])(pmessage);
@@ -547,7 +547,7 @@ void AMQPQueue::sendConsumeCommand() {
 		free(buf);
 
 		if ( events.find(AMQP_MESSAGE) != events.end() ) {
-#if __cplusplus > 199711L // C++11 or greater
+#if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
                         int res = events[AMQP_MESSAGE](pmessage);
 #else                            
 			int res = (int)(*events[AMQP_MESSAGE])(pmessage);
