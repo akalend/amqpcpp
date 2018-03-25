@@ -180,6 +180,9 @@ void AMQP::sockConnect() {
 
 	switch(proto) {
 		case AMQPS_proto: {
+#ifdef AMQP_NO_SSL
+			throw std::runtime_error("AMQPcpp built with no SSL support");
+#else // AMQP_NO_SSL
 			sockfd = amqp_ssl_socket_new(cnn);
 
 			status = amqp_ssl_socket_set_cacert(sockfd, cacert_path.c_str());
@@ -198,6 +201,7 @@ void AMQP::sockConnect() {
 			amqp_ssl_socket_set_verify_peer(sockfd, verify_peer ? 1 : 0);
 			amqp_ssl_socket_set_verify_hostname(sockfd, verify_hostname ? 1 : 0);
 #endif
+#endif // AMQP_NO_SSL
 		}
 		break;
 
