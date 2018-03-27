@@ -60,11 +60,11 @@ void AMQPMessage::setConsumerTag(string consumer_tag) {
 	this->consumer_tag=consumer_tag;
 }
 
-void AMQPMessage::setDeliveryTag(uint32_t delivery_tag) {
+void AMQPMessage::setDeliveryTag(uint64_t delivery_tag) {
 	this->delivery_tag=delivery_tag;
 }
 
-uint32_t AMQPMessage::getDeliveryTag() {
+uint64_t AMQPMessage::getDeliveryTag() {
 	return this->delivery_tag;
 }
 

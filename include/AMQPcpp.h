@@ -97,7 +97,7 @@ class AMQPMessage {
 	uint32_t len;
 	std::string exchange;
 	std::string routing_key;
-	uint32_t delivery_tag;
+	uint64_t delivery_tag;
 	int message_count;
 	std::string consumer_tag;
 	AMQPQueue * queue;
@@ -131,8 +131,8 @@ class AMQPMessage {
 		void setRoutingKey(std::string routing_key);
 		std::string getRoutingKey();
 
-		uint32_t getDeliveryTag();
-		void setDeliveryTag(uint32_t delivery_tag);
+		uint64_t getDeliveryTag();
+		void setDeliveryTag(uint64_t delivery_tag);
 
 		AMQPQueue * getQueue();
 };
@@ -172,7 +172,7 @@ class AMQPQueue : public AMQPBase  {
 		std::map< AMQPEvents_e, int(*)( AMQPMessage * ) > events;
 #endif
 		amqp_bytes_t consumer_tag;
-		uint32_t delivery_tag;
+		uint64_t delivery_tag;
 		uint32_t count;
 	public:
 		AMQPQueue(amqp_connection_state_t * cnn, int channelNum);
