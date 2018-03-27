@@ -468,7 +468,9 @@ void AMQPQueue::sendConsumeCommand() {
 		//if (result <= 0) return;
 		//according to definition of the amqp_simple_wait_frame
 		//result = 0 means success	
-		if (result < 0) return;
+        if (result < 0) {
+            throw std::runtime_error("amqp_simple_wait_frame returned " + std::to_string(result));
+        }
 		//printf("frame method.id=%d  frame.frame_type=%d\n",frame.payload.method.id, frame.frame_type);
 
 		if (frame.frame_type != AMQP_FRAME_METHOD){
