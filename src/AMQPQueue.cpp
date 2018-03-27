@@ -456,9 +456,9 @@ void AMQPQueue::sendConsumeCommand() {
 		//if (result <= 0) return;
 		//according to definition of the amqp_simple_wait_frame
 		//result = 0 means success	
-        if (result < 0) {
-            throw std::runtime_error("amqp_simple_wait_frame returned " + std::to_string(result));
-        }
+		if (result < 0) {
+			throw AMQPException("amqp_simple_wait_frame", result);
+		}
 		//printf("frame method.id=%d  frame.frame_type=%d\n",frame.payload.method.id, frame.frame_type);
 
 		if (frame.frame_type != AMQP_FRAME_METHOD){
@@ -509,7 +509,11 @@ void AMQPQueue::sendConsumeCommand() {
 
 		this->setHeaders(p);
 
-		body_target = frame.payload.properties.body_size;
+		if (frame.payload.properties.body_size >= std::numeric_limits<size_t>::max()) {
+			throw AMQPException("Frame size " + std::to_string(frame.payload.properties.body_size) + " exceeds maximum supported by the platform");
+		}
+
+		body_target = static_cast<size_t>(frame.payload.properties.body_size);
 		body_received = 0;
 
 		buf = (char*) malloc(body_target+1);
