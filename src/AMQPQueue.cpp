@@ -319,7 +319,7 @@ void AMQPQueue::sendGetCommand() {
 		}
 
 		if (frame.frame_type == AMQP_FRAME_BODY){
-			uint32_t frame_len = frame.payload.body_fragment.len;
+			size_t frame_len = frame.payload.body_fragment.len;
 
 			size_t old_len = len;
 			len += frame_len;
@@ -328,7 +328,7 @@ void AMQPQueue::sendGetCommand() {
 				old_tmp = tmp;
 				tmp = (char*) malloc(len+1);
 				if (!tmp) {
-					throw AMQPException("cannot alocate memory for data");
+					throw AMQPException("cannot allocate memory for data");
 				}
 				memcpy( tmp, old_tmp, old_len );
 				free(old_tmp);
