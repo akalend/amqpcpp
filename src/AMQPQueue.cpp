@@ -17,7 +17,6 @@ AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum) {
 	consumer_tag.bytes=NULL;
 	consumer_tag.len=0;
 	delivery_tag =0;
-	pmessage=NULL;
 	openChannel();
 }
 
@@ -29,13 +28,10 @@ AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum, string name)
 	consumer_tag.bytes=NULL;
 	consumer_tag.len=0;
 	delivery_tag =0;
-	pmessage=NULL;
 	openChannel();
 }
 
 AMQPQueue::~AMQPQueue() {
-	if (pmessage)
-		delete pmessage;
 }
 
 // Declare command /* 50, 10; 3276810 */
@@ -257,10 +253,7 @@ void AMQPQueue::sendGetCommand() {
 
 	amqp_release_buffers(*cnn);
 
-	if (pmessage)
-		delete(pmessage);
-
-	pmessage = new AMQPMessage(this);
+	pmessage = std::make_unique<AMQPMessage>(this);
 
 	if ( res.reply_type == AMQP_RESPONSE_NONE) {
 		throw AMQPException("error the Get command, response none");
@@ -358,7 +351,7 @@ void AMQPQueue::sendGetCommand() {
 	}
 
 	if (tmp) {
-	        pmessage->setMessage(tmp,len);
+		pmessage->setMessage(tmp,len);
 		free(tmp);
 	}
 	amqp_release_buffers(*cnn);
@@ -366,10 +359,10 @@ void AMQPQueue::sendGetCommand() {
 
 void AMQPQueue::addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*)) {
 #if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
-        std::function<int(AMQPMessage*)> callback = &(*event);
-        addEvent(eventType, callback);
+	std::function<int(AMQPMessage*)> callback = &(*event);
+	addEvent(eventType, callback);
 #else
-        if (events.find(eventType) != events.end())
+	if (events.find(eventType) != events.end())
 		throw AMQPException("event already added");
 	events[eventType] = reinterpret_cast< int(*)( AMQPMessage * ) > (event);
 #endif
@@ -448,12 +441,7 @@ void AMQPQueue::sendConsumeCommand() {
 //		consume_ok = (amqp_basic_consume_ok_t*) res.reply.decoded;
 //		//printf("****** consume Ok c_tag=%s", consume_ok->consumer_tag.bytes );
 //	}
-#if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
-        unique_ptr<AMQPMessage> message ( new AMQPMessage(this) );
-#else
-	auto_ptr<AMQPMessage> message ( new AMQPMessage(this) );
-#endif
-	pmessage = message.get();
+	pmessage = std::make_unique<AMQPMessage>(this);
 
 	amqp_frame_t frame;
 	char * buf=NULL, *pbuf = NULL;
@@ -483,10 +471,10 @@ void AMQPQueue::sendConsumeCommand() {
 			//cout << "CANCEL OK method.id="<< frame.payload.method.id << endl;
 			if ( events.find(AMQP_CANCEL) != events.end() ) {
 #if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
-                                events[AMQP_CANCEL](pmessage);
-#else                            
+				events[AMQP_CANCEL](pmessage.get());
+#else
 				(*events[AMQP_CANCEL])(pmessage);
-#endif                                
+#endif
 			}
 			break;
 		}
@@ -550,8 +538,8 @@ void AMQPQueue::sendConsumeCommand() {
 
 		if ( events.find(AMQP_MESSAGE) != events.end() ) {
 #if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
-                        int res = events[AMQP_MESSAGE](pmessage);
-#else                            
+			int res = events[AMQP_MESSAGE](pmessage.get());
+#else
 			int res = (int)(*events[AMQP_MESSAGE])(pmessage);
 #endif 
 			
@@ -559,8 +547,6 @@ void AMQPQueue::sendConsumeCommand() {
 			if (res) break;
 		}
 	}
-
-	pmessage = nullptr;
 }
 
 void AMQPQueue::setHeaders(amqp_basic_properties_t * p) {

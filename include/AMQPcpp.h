@@ -144,7 +144,7 @@ class AMQPBase {
 		short parms;
 		amqp_connection_state_t * cnn;
 		int channelNum;
-		AMQPMessage * pmessage;
+		std::unique_ptr<AMQPMessage> pmessage;
 
 		short opened;
 
@@ -208,7 +208,7 @@ class AMQPQueue : public AMQPBase  {
 		void Reject(uint32_t delivery_tag, bool requeue);
 
 		AMQPMessage * getMessage() {
-			return pmessage;
+			return pmessage.get();
 		}
 
 		uint32_t getCount() {
