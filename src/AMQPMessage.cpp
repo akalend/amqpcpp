@@ -110,10 +110,7 @@ void AMQPMessage::addHeader(string name, amqp_bytes_t * value) {
 }
 
 void AMQPMessage::addHeader(string name, uint64_t * value) {
-	char ivalue[32];
-	memset(ivalue,0,32);
-	sprintf(ivalue,"%lu", *value);
-	headers[name] = string(ivalue);
+	headers[name] = std::to_string(*value);
 	//headers.insert(pair<string,string>(name,string(ivalue)));
 }
 
