@@ -650,7 +650,7 @@ void AMQPQueue::Ack() {
 	sendAckCommand();
 }
 
-void AMQPQueue::Ack(uint32_t delivery_tag) {
+void AMQPQueue::Ack(uint64_t delivery_tag) {
 	this->delivery_tag=delivery_tag;
 
 	sendAckCommand();
@@ -671,7 +671,7 @@ void AMQPQueue::Reject(bool requeue) {
 	sendRejectCommand(requeue);
 }
 
-void AMQPQueue::Reject(uint32_t delivery_tag, bool requeue) {
+void AMQPQueue::Reject(uint64_t delivery_tag, bool requeue) {
 	this->delivery_tag = delivery_tag;
 
 	sendRejectCommand(requeue);

@@ -22,7 +22,7 @@ AMQPMessage::~AMQPMessage() {
 	}
 }
 
-void AMQPMessage::setMessage(const char * data,uint32_t length) {
+void AMQPMessage::setMessage(const char * data,size_t length) {
 	if (!data)
 		return;
 
@@ -38,7 +38,7 @@ void AMQPMessage::setMessage(const char * data,uint32_t length) {
 	this->len = length;
 }
 
-char * AMQPMessage::getMessage(uint32_t* length) {
+char * AMQPMessage::getMessage(size_t* length) {
 	if (this->data)
 	  {
 	    *length = this->len;

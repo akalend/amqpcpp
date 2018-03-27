@@ -94,7 +94,7 @@ class AMQPException : public std::exception {
 class AMQPMessage {
 
 	char * data;
-	uint32_t len;
+	size_t len;
 	std::string exchange;
 	std::string routing_key;
 	uint64_t delivery_tag;
@@ -107,8 +107,8 @@ class AMQPMessage {
 		AMQPMessage(AMQPQueue * queue);
 		~AMQPMessage();
 
-		void setMessage(const char * data,uint32_t length);
-		char * getMessage(uint32_t* length);
+		void setMessage(const char * data, size_t length);
+		char * getMessage(size_t* length);
 
 		void addHeader(std::string name, amqp_bytes_t * value);
 		void addHeader(std::string name, uint64_t * value);
@@ -202,10 +202,10 @@ class AMQPQueue : public AMQPBase  {
 		void Cancel(std::string consumer_tag);
 
 		void Ack();
-		void Ack(uint32_t delivery_tag);
+		void Ack(uint64_t delivery_tag);
 
 		void Reject(bool requeue);
-		void Reject(uint32_t delivery_tag, bool requeue);
+		void Reject(uint64_t delivery_tag, bool requeue);
 
 		AMQPMessage * getMessage() {
 			return pmessage.get();
@@ -263,7 +263,7 @@ class AMQPExchange : public AMQPBase {
 		void Bind(std::string queueName, std::string key);
 
 		void Publish(std::string message, std::string key);
-		void Publish(char * data, uint32_t length, std::string key);
+		void Publish(char * data, size_t length, std::string key);
 
 		void setHeader(std::string name, int value);
 		void setHeader(std::string name, std::string value);

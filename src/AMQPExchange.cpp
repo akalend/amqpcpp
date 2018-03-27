@@ -188,7 +188,7 @@ void AMQPExchange::Publish(string message, string key) {
 	}
 }
 
-void AMQPExchange::Publish(char * data, uint32_t length, string key) {
+void AMQPExchange::Publish(char * data, size_t length, string key) {
 	amqp_bytes_t messageByte;
 	messageByte.bytes = data;
 	messageByte.len = length;
@@ -268,7 +268,7 @@ void AMQPExchange::sendPublishCommand(amqp_bytes_t messageByte, const char * key
 		props._flags += AMQP_BASIC_REPLY_TO_FLAG;
 	}
 
-	props.headers.num_entries = sHeadersSpecial.size();
+	props.headers.num_entries = static_cast<int>(sHeadersSpecial.size());
 	amqp_table_entry_t_ *entries = (amqp_table_entry_t_*) malloc(sizeof(amqp_table_entry_t_) * props.headers.num_entries);
 
 	int i = 0;
