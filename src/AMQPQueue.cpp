@@ -34,7 +34,6 @@ AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum, string name)
 }
 
 AMQPQueue::~AMQPQueue() {
-	this->closeChannel();
 	if (pmessage)
 		delete pmessage;
 }
