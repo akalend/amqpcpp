@@ -289,7 +289,7 @@ class AMQP {
 		AMQP();
 		AMQP(std::string cnnStr, bool use_ssl_=false,
 				std::string cacert_path_="", std::string client_cert_path_="", std::string client_key_path_="",
-				bool verify_peer_=false, bool verify_hostname_=false);
+				bool verify_peer_=false, bool verify_hostname_=false, int heartbeat = 0);
 		~AMQP();
 
 		AMQPExchange * createExchange();
@@ -309,12 +309,12 @@ class AMQP {
 	private:
 		void init(enum AMQPProto_e proto);
 		void initDefault(enum AMQPProto_e proto);
-		void connect();
+		void connect(int heartbeat = 0);
 		void parseCnnString(std::string cnnString );
 		void parseHostPort(std::string hostPortString );
 		void parseUserStr(std::string userString );
 		void sockConnect();
-		void login();
+		void login(int heartbeat);
 
 
 
