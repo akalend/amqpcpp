@@ -45,7 +45,7 @@ char * AMQPMessage::getMessage(uint32_t* length) {
 	    return this->data;
 	  }
 	*length = 0;
-	return '\0';
+	return (char*) '\0';
 }
 
 string AMQPMessage::getConsumerTag() {
