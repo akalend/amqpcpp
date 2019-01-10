@@ -8,6 +8,8 @@
 
 #include "AMQPcpp.h"
 #include <limits>
+#include <deque>
+#include <assert.h>
 
 using namespace std;
 
@@ -303,9 +305,8 @@ void AMQPQueue::sendGetCommand() {
 	}
 
 	int result;
-	size_t len=0;
-	char * tmp = NULL;
-	char * old_tmp = NULL;
+	std::deque<std::vector<char>> buffered_frames;
+	size_t total_length = 0;
 
 	while (1){ //receive frames...
 		amqp_maybe_release_buffers(*cnn);
@@ -322,26 +323,12 @@ void AMQPQueue::sendGetCommand() {
 		if (frame.frame_type == AMQP_FRAME_BODY){
 			size_t frame_len = frame.payload.body_fragment.len;
 
-			size_t old_len = len;
-			len += frame_len;
+			buffered_frames.emplace_back(frame_len);
 
-			if ( tmp ) {
-				old_tmp = tmp;
-				tmp = (char*) malloc(len+1);
-				if (!tmp) {
-					throw AMQPException("cannot allocate memory for data");
-				}
-				memcpy( tmp, old_tmp, old_len );
-				free(old_tmp);
-				memcpy(tmp + old_len,frame.payload.body_fragment.bytes, frame_len);
-				*(tmp+frame_len+old_len) = '\0';
-			} else {// the first allocate
-				tmp = (char*) malloc(frame_len+1);
-				if (!tmp) {
-					throw AMQPException("can't reallocate object");
-				}
-				memcpy(tmp, (char*) frame.payload.body_fragment.bytes, frame_len);
-				*(tmp+frame_len) = '\0';
+			if (frame_len > 0) {
+				auto& buffered_frame = buffered_frames.back();
+				memcpy(&buffered_frame[0], frame.payload.body_fragment.bytes, frame_len);
+				total_length += frame_len;
 			}
 
 			if (frame_len < FRAME_MAX - HEADER_FOOTER_SIZE)
@@ -351,9 +338,19 @@ void AMQPQueue::sendGetCommand() {
 		}
 	}
 
-	if (tmp) {
-		pmessage->setMessage(tmp,len);
-		free(tmp);
+	if (!buffered_frames.empty()) {
+		std::vector<char> complete_frame(total_length + 1);
+		size_t i = 0;
+		for (const auto& buffered_frame : buffered_frames) {
+			if (buffered_frame.size() > 0) {
+				memcpy(&complete_frame[i], &buffered_frame[0], buffered_frame.size());
+				i += buffered_frame.size();
+			}
+		}
+		assert(i == total_length);
+		complete_frame[i] = '\0';
+
+		pmessage->setMessage(complete_frame.data(), total_length);
 	}
 	amqp_release_buffers(*cnn);
 }
