@@ -7,6 +7,7 @@
  */
 
 #include "AMQPcpp.h"
+#include <algorithm> // std::transform
 #include <limits>
 #include <deque>
 #include <assert.h>
@@ -49,13 +50,22 @@ void AMQPQueue::Declare(string name) {
 	sendDeclareCommand();
 }
 
-void AMQPQueue::Declare(string name, short parms) {
+void AMQPQueue::Declare(string name, short parms, const std::vector<KeyValuePair>& arguments) {
 	this->parms=parms;
 	this->name=name;
-	sendDeclareCommand();
+	sendDeclareCommand(arguments);
 }
 
-void AMQPQueue::sendDeclareCommand() {
+// copied from amqp_table.cpp
+amqp_table_entry_t amqp_table_construct_utf8_entry(const char *key, const char *value) {
+	amqp_table_entry_t ret;
+	ret.key = amqp_cstring_bytes(key);
+	ret.value.kind = AMQP_FIELD_KIND_UTF8;
+	ret.value.value.bytes = amqp_cstring_bytes(value);
+	return ret;
+}
+
+void AMQPQueue::sendDeclareCommand(const std::vector<KeyValuePair>& arguments) {
 	amqp_bytes_t queue_name = amqp_cstring_bytes(name.c_str());
 
 	/*
@@ -64,8 +74,19 @@ void AMQPQueue::sendDeclareCommand() {
 		props.content_type = amqp_cstring_bytes("text/plain");
 	*/
 	amqp_table_t args;
-	args.num_entries = 0;
-	args.entries = NULL;
+	args.num_entries = static_cast<int>(arguments.size());
+
+	std::vector<amqp_table_entry_t> a(arguments.size());
+	if (arguments.empty()) {
+		args.entries = nullptr;
+	}
+	else {
+		const auto toTableEntry = [](const KeyValuePair& kvp) {
+			return amqp_table_construct_utf8_entry(kvp.key.c_str(), kvp.value.c_str());
+		};
+		std::transform(arguments.begin(), arguments.end(), a.begin(), toTableEntry);
+		args.entries = &a[0];
+	}
 
 	amqp_boolean_t exclusive =  (parms & AMQP_EXCLUSIVE)	? 1:0;
 	amqp_boolean_t passive =    (parms & AMQP_PASSIVE)		? 1:0;

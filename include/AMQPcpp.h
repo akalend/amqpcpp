@@ -178,9 +178,15 @@ class AMQPQueue : public AMQPBase  {
 		AMQPQueue(amqp_connection_state_t * cnn, int channelNum);
 		AMQPQueue(amqp_connection_state_t * cnn, int channelNum, std::string name);
 
+		struct KeyValuePair
+		{
+			std::string key;
+			std::string value;
+		};
+
 		void Declare();
 		void Declare(std::string name);
-		void Declare(std::string name, short parms);
+		void Declare(std::string name, short parms, const std::vector<KeyValuePair>& arguments = std::vector<KeyValuePair>());
 
 		void Delete();
 		void Delete(std::string name);
@@ -226,7 +232,7 @@ class AMQPQueue : public AMQPBase  {
 		
 		void Qos(uint32_t prefetch_size, uint16_t prefetch_count, amqp_boolean_t global );
 	private:
-		void sendDeclareCommand();
+		void sendDeclareCommand(const std::vector<KeyValuePair>& arguments = std::vector<KeyValuePair>());
 		void sendDeleteCommand();
 		void sendPurgeCommand();
 		void sendBindCommand(const char * exchange, const char * key);
