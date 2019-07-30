@@ -18,8 +18,6 @@ AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum) {
 	this->cnn = cnn;
 	this->channelNum = channelNum;
 
-	consumer_tag.bytes=NULL;
-	consumer_tag.len=0;
 	delivery_tag =0;
 	openChannel();
 }
@@ -29,13 +27,13 @@ AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum, string name)
 	this->channelNum = channelNum;
 	this->name = name;
 
-	consumer_tag.bytes=NULL;
-	consumer_tag.len=0;
 	delivery_tag =0;
 	openChannel();
 }
 
 AMQPQueue::~AMQPQueue() {
+	if (pmessage)
+		delete pmessage;
 }
 
 // Declare command /* 50, 10; 3276810 */
@@ -161,7 +159,7 @@ void AMQPQueue::sendDeleteCommand() {
 	AMQPBase::checkReply(&res);
 }
 
-// Purge command /* 50, 30; 3276830 */
+// Purge command /* 50, 30; 3276830 *
 void AMQPQueue::Purge() {
 	if (!name.size())
 		throw AMQPException("the name of queue not set");
@@ -406,7 +404,7 @@ void AMQPQueue::Consume(short parms) {
 }
 
 void AMQPQueue::setConsumerTag(string consumer_tag) {
-	this->consumer_tag = amqp_cstring_bytes(consumer_tag.c_str());
+	this->consumer_tag = consumer_tag;
 }
 
 void AMQPQueue::sendConsumeCommand() {
@@ -435,7 +433,7 @@ void AMQPQueue::sendConsumeCommand() {
 	memset(&s,0,sizeof(amqp_basic_consume_t));
 		s.ticket = channelNum;
 		s.queue = queueByte;
-		s.consumer_tag = consumer_tag;
+		s.consumer_tag = amqp_cstring_bytes(consumer_tag.c_str());
 		s.no_local = ( AMQP_NOLOCAL & parms ) ? 1:0;
 		s.no_ack = ( AMQP_NOACK & parms ) ? 1:0;
 		s.exclusive = ( AMQP_EXCLUSIVE & parms ) ? 1:0;
@@ -640,25 +638,24 @@ void AMQPQueue::setHeaders(amqp_basic_properties_t * p) {
 }
 
 void AMQPQueue::Cancel(string consumer_tag){
-	this->consumer_tag = amqp_cstring_bytes(consumer_tag.c_str());
+	this->consumer_tag = consumer_tag;
 	sendCancelCommand();
 }
 
 void AMQPQueue::Cancel(amqp_bytes_t consumer_tag){
-	this->consumer_tag.len = consumer_tag.len;
-	this->consumer_tag.bytes = consumer_tag.bytes;
+	this->consumer_tag = string((char*)consumer_tag.bytes, consumer_tag.len);
 	sendCancelCommand();
 }
 
 void AMQPQueue::sendCancelCommand(){
 	amqp_basic_cancel_t s;
-		s.consumer_tag=consumer_tag;
+		s.consumer_tag= amqp_cstring_bytes(consumer_tag.c_str());
 		s.nowait=( AMQP_NOWAIT & parms ) ? 1:0;
 
 	amqp_send_method(*cnn, channelNum, AMQP_BASIC_CANCEL_METHOD, &s);
 }
 
-amqp_bytes_t AMQPQueue::getConsumerTag() {
+std::string AMQPQueue::getConsumerTag() {
 	return consumer_tag;
 }
 
