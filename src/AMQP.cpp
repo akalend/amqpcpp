@@ -219,8 +219,9 @@ void AMQP::sockConnect() {
 void AMQP::login() {
 	amqp_rpc_reply_t res = amqp_login(cnn, vhost.c_str(), 0, FRAME_MAX, 0, AMQP_SASL_METHOD_PLAIN, user.c_str(), password.c_str());
 	if ( res.reply_type != AMQP_RESPONSE_NORMAL) {
+		const AMQPException exception(&res);
 		amqp_destroy_connection(cnn);
-		throw AMQPException(&res);
+		throw exception;
 	}
 }
 
@@ -246,7 +247,7 @@ AMQPQueue * AMQP::createQueue() {
 }
 
 AMQPQueue * AMQP::createQueue(string name) {
-        channelNumber++;
+	channelNumber++;
 	AMQPQueue * queue = new AMQPQueue(&cnn,channelNumber,name);
 	channels.push_back( dynamic_cast<AMQPBase*>(queue) );
 	return queue;
