@@ -1,6 +1,6 @@
 CXX      = g++
 CFLAGS   = -Wall
-CPPFLAGS = $(CFLAGS) -I/usr/local/include -L/usr/local/lib -Iinclude/
+CPPFLAGS = $(CFLAGS) -Irabbitmq-c/librabbitmq -I/usr/local/include -Lrabbitmq-c/build/librabbitmq -L/usr/local/lib -Iinclude/
 
 LIBRARIES= rabbitmq ssl crypto
 LIBS     = $(addprefix -l,$(LIBRARIES))

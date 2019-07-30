@@ -1,0 +1,3 @@
+[submodule "rabbitmq-c"]
+	path = rabbitmq-c
+	url = https://github.com/alanxz/rabbitmq-c
