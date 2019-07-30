@@ -32,8 +32,6 @@ AMQPQueue::AMQPQueue(amqp_connection_state_t * cnn, int channelNum, string name)
 }
 
 AMQPQueue::~AMQPQueue() {
-	if (pmessage)
-		delete pmessage;
 }
 
 // Declare command /* 50, 10; 3276810 */
