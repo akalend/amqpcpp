@@ -10,7 +10,7 @@ int main (int argc, char** argv) {
 //		AMQP amqp;
 //		AMQP amqp(AMQPDEBUG);
 	
-		AMQP amqp("123123:akalend@localhost:5673/private");		// all connect string
+		AMQP amqp("123123:akalend@localhost:5673/private", 60);		// all connect string
 
 		AMQPExchange * ex = amqp.createExchange("e");
 		ex->Declare("e", "fanout");
