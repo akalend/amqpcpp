@@ -21,7 +21,15 @@ AMQPException::AMQPException(string action, int error_code)
 
 AMQPException::AMQPException( amqp_rpc_reply_t * res) {
 	if( res->reply_type == AMQP_RESPONSE_LIBRARY_EXCEPTION) {
-		this->message = res->library_error ? strerror(res->library_error) : "end-of-stream";
+        if (res->library_error) {
+            switch (res->library_error) {
+            case AMQP_STATUS_SOCKET_ERROR: this->message = "AMQP socket error"; break;
+            default: this->message = "AMQP error " + std::to_string(res->library_error) + " (see amqp.h to figure out what this means)"; break;
+            }
+        }
+        else {
+            this->message = "end-of-stream";
+        }
 	}
 
 	if( res->reply_type == AMQP_RESPONSE_SERVER_EXCEPTION) {

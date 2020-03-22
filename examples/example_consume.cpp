@@ -10,7 +10,7 @@ int onCancel(AMQPMessage * message ) {
 }
 
 int  onMessage( AMQPMessage * message  ) {
-	uint32_t j = 0;
+	size_t j = 0;
 	char * data = message->getMessage(&j);
 	if (data)
 		  cout << data << endl;

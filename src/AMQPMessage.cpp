@@ -22,7 +22,7 @@ AMQPMessage::~AMQPMessage() {
 	}
 }
 
-void AMQPMessage::setMessage(const char * data,uint32_t length) {
+void AMQPMessage::setMessage(const char * data,size_t length) {
 	if (!data)
 		return;
 
@@ -38,7 +38,7 @@ void AMQPMessage::setMessage(const char * data,uint32_t length) {
 	this->len = length;
 }
 
-char * AMQPMessage::getMessage(uint32_t* length) {
+char * AMQPMessage::getMessage(size_t* length) {
 	if (this->data)
 	  {
 	    *length = this->len;
@@ -60,11 +60,11 @@ void AMQPMessage::setConsumerTag(string consumer_tag) {
 	this->consumer_tag=consumer_tag;
 }
 
-void AMQPMessage::setDeliveryTag(uint32_t delivery_tag) {
+void AMQPMessage::setDeliveryTag(uint64_t delivery_tag) {
 	this->delivery_tag=delivery_tag;
 }
 
-uint32_t AMQPMessage::getDeliveryTag() {
+uint64_t AMQPMessage::getDeliveryTag() {
 	return this->delivery_tag;
 }
 
@@ -110,18 +110,12 @@ void AMQPMessage::addHeader(string name, amqp_bytes_t * value) {
 }
 
 void AMQPMessage::addHeader(string name, uint64_t * value) {
-	char ivalue[32];
-	memset(ivalue,0,32);
-	sprintf(ivalue,"%lu", *value);
-	headers[name] = string(ivalue);
+	headers[name] = std::to_string(*value);
 	//headers.insert(pair<string,string>(name,string(ivalue)));
 }
 
 void AMQPMessage::addHeader(string name, uint8_t * value) {
-	char ivalue[4];
-	memset(ivalue,0,4);
-	sprintf(ivalue,"%d",*value);
-	headers[name] = string(ivalue);
+	headers[name] = std::to_string(*value);
 	//headers.insert( pair<string,string>(name,string(ivalue)));
 }
 

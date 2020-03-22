@@ -20,7 +20,7 @@ AMQP::AMQP() {
 
 AMQP::AMQP(string cnnStr, bool use_ssl_,
 		string cacert_path_, string client_cert_path_, string client_key_path_,
-		bool verify_peer_, bool verify_hostname_) {
+		bool verify_peer_, bool verify_hostname_, int heartbeat) {
 	use_ssl = use_ssl_;
 	proto = SET_AMQP_PROTO_BY_SSL_USAGE(use_ssl);
 	cacert_path = cacert_path_;
@@ -31,7 +31,7 @@ AMQP::AMQP(string cnnStr, bool use_ssl_,
 
 	AMQP::init(proto);
 	AMQP::parseCnnString(cnnStr);
-	AMQP::connect();
+	AMQP::connect(heartbeat);
 };
 
 AMQP::~AMQP() {
@@ -158,9 +158,9 @@ void AMQP::parseHostPort(string hostPortString ) {
 	}
 }
 
-void AMQP::connect() {
+void AMQP::connect(int heartbeat) {
 	AMQP::sockConnect();
-	AMQP::login();
+	AMQP::login(heartbeat);
 }
 
 void AMQP::printConnect() {
@@ -179,6 +179,9 @@ void AMQP::sockConnect() {
 
 	switch(proto) {
 		case AMQPS_proto: {
+#ifdef AMQP_NO_SSL
+			throw std::runtime_error("AMQPcpp built with no SSL support");
+#else // AMQP_NO_SSL
 			sockfd = amqp_ssl_socket_new(cnn);
 
 			status = amqp_ssl_socket_set_cacert(sockfd, cacert_path.c_str());
@@ -197,6 +200,7 @@ void AMQP::sockConnect() {
 			amqp_ssl_socket_set_verify_peer(sockfd, verify_peer ? 1 : 0);
 			amqp_ssl_socket_set_verify_hostname(sockfd, verify_hostname ? 1 : 0);
 #endif
+#endif // AMQP_NO_SSL
 		}
 		break;
 
@@ -215,8 +219,8 @@ void AMQP::sockConnect() {
 	}
 }
 
-void AMQP::login() {
-	amqp_rpc_reply_t res = amqp_login(cnn, vhost.c_str(), 0, FRAME_MAX, 0, AMQP_SASL_METHOD_PLAIN, user.c_str(), password.c_str());
+void AMQP::login(int heartbeat) {
+	amqp_rpc_reply_t res = amqp_login(cnn, vhost.c_str(), 0, FRAME_MAX, heartbeat, AMQP_SASL_METHOD_PLAIN, user.c_str(), password.c_str());
 	if ( res.reply_type != AMQP_RESPONSE_NORMAL) {
 		const AMQPException exception(&res);
 		amqp_destroy_connection(cnn);

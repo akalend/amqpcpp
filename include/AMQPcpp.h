@@ -52,7 +52,7 @@
 #include <memory>
 #include <exception>
 
-#if __cplusplus > 199711L // C++11 or greater
+#if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
 #include <functional>
 #endif
 //export AMQP;
@@ -94,10 +94,10 @@ class AMQPException : public std::exception {
 class AMQPMessage {
 
 	char * data;
-	uint32_t len;
+	size_t len;
 	std::string exchange;
 	std::string routing_key;
-	uint32_t delivery_tag;
+	uint64_t delivery_tag;
 	int message_count;
 	std::string consumer_tag;
 	AMQPQueue * queue;
@@ -107,8 +107,8 @@ class AMQPMessage {
 		AMQPMessage(AMQPQueue * queue);
 		~AMQPMessage();
 
-		void setMessage(const char * data,uint32_t length);
-		char * getMessage(uint32_t* length);
+		void setMessage(const char * data, size_t length);
+		char * getMessage(size_t* length);
 
 		void addHeader(std::string name, amqp_bytes_t * value);
 		void addHeader(std::string name, uint64_t * value);
@@ -131,8 +131,8 @@ class AMQPMessage {
 		void setRoutingKey(std::string routing_key);
 		std::string getRoutingKey();
 
-		uint32_t getDeliveryTag();
-		void setDeliveryTag(uint32_t delivery_tag);
+		uint64_t getDeliveryTag();
+		void setDeliveryTag(uint64_t delivery_tag);
 
 		AMQPQueue * getQueue();
 };
@@ -144,7 +144,7 @@ class AMQPBase {
 		short parms;
 		amqp_connection_state_t * cnn;
 		int channelNum;
-		AMQPMessage * pmessage;
+		std::unique_ptr<AMQPMessage> pmessage;
 
 		short opened;
 
@@ -166,21 +166,27 @@ class AMQPBase {
 
 class AMQPQueue : public AMQPBase  {
 	protected:
-#if __cplusplus > 199711L // C++11 or greater
+#if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
                 std::map< AMQPEvents_e, std::function<int(AMQPMessage*)> > events;
 #else
 		std::map< AMQPEvents_e, int(*)( AMQPMessage * ) > events;
 #endif
-		amqp_bytes_t consumer_tag;
-		uint32_t delivery_tag;
+		std::string consumer_tag;
+		uint64_t delivery_tag;
 		uint32_t count;
 	public:
 		AMQPQueue(amqp_connection_state_t * cnn, int channelNum);
 		AMQPQueue(amqp_connection_state_t * cnn, int channelNum, std::string name);
 
+		struct KeyValuePair
+		{
+			std::string key;
+			std::string value;
+		};
+
 		void Declare();
 		void Declare(std::string name);
-		void Declare(std::string name, short parms);
+		void Declare(std::string name, short parms, const std::vector<KeyValuePair>& arguments = std::vector<KeyValuePair>());
 
 		void Delete();
 		void Delete(std::string name);
@@ -202,10 +208,13 @@ class AMQPQueue : public AMQPBase  {
 		void Cancel(std::string consumer_tag);
 
 		void Ack();
-		void Ack(uint32_t delivery_tag);
+		void Ack(uint64_t delivery_tag);
+
+		void Reject(bool requeue);
+		void Reject(uint64_t delivery_tag, bool requeue);
 
 		AMQPMessage * getMessage() {
-			return pmessage;
+			return pmessage.get();
 		}
 
 		uint32_t getCount() {
@@ -213,17 +222,17 @@ class AMQPQueue : public AMQPBase  {
 		}
 
 		void setConsumerTag(std::string consumer_tag);
-		amqp_bytes_t getConsumerTag();
+		std::string getConsumerTag();
 
 		void addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*) );
-#if __cplusplus > 199711L // C++11 or greater
+#if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
                 void addEvent( AMQPEvents_e eventType, std::function<int(AMQPMessage*)>& event );
 #endif
 		virtual ~AMQPQueue();
 		
 		void Qos(uint32_t prefetch_size, uint16_t prefetch_count, amqp_boolean_t global );
 	private:
-		void sendDeclareCommand();
+		void sendDeclareCommand(const std::vector<KeyValuePair>& arguments = std::vector<KeyValuePair>());
 		void sendDeleteCommand();
 		void sendPurgeCommand();
 		void sendBindCommand(const char * exchange, const char * key);
@@ -232,6 +241,7 @@ class AMQPQueue : public AMQPBase  {
 		void sendConsumeCommand();
 		void sendCancelCommand();
 		void sendAckCommand();
+		void sendRejectCommand(bool requeue);
 		void setHeaders(amqp_basic_properties_t * p);
 };
 
@@ -259,7 +269,7 @@ class AMQPExchange : public AMQPBase {
 		void Bind(std::string queueName, std::string key);
 
 		void Publish(std::string message, std::string key);
-		void Publish(char * data, uint32_t length, std::string key);
+		void Publish(char * data, size_t length, std::string key);
 
 		void setHeader(std::string name, int value);
 		void setHeader(std::string name, std::string value);
@@ -285,7 +295,7 @@ class AMQP {
 		AMQP();
 		AMQP(std::string cnnStr, bool use_ssl_=false,
 				std::string cacert_path_="", std::string client_cert_path_="", std::string client_key_path_="",
-				bool verify_peer_=false, bool verify_hostname_=false);
+				bool verify_peer_=false, bool verify_hostname_=false, int heartbeat = 60);
 		~AMQP();
 
 		AMQPExchange * createExchange();
@@ -298,15 +308,19 @@ class AMQP {
 
 		void closeChannel();
 
+        amqp_connection_state_t getConnectionState() {
+            return cnn;
+        }
+
 	private:
 		void init(enum AMQPProto_e proto);
 		void initDefault(enum AMQPProto_e proto);
-		void connect();
+		void connect(int heartbeat = 60);
 		void parseCnnString(std::string cnnString );
 		void parseHostPort(std::string hostPortString );
 		void parseUserStr(std::string userString );
 		void sockConnect();
-		void login();
+		void login(int heartbeat);
 
 
 
