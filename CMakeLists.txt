@@ -32,7 +32,7 @@ add_library(
 target_include_directories(amqpcpp-static PUBLIC include/)
 
 add_subdirectory(rabbitmq-c)
-target_include_directories(rabbitmq PUBLIC rabbitmq-c/librabbitmq/)
+target_include_directories(rabbitmq PRIVATE rabbitmq-c/librabbitmq/)
 
 target_link_libraries(amqpcpp rabbitmq ssl crypto)
 target_link_libraries(amqpcpp-static rabbitmq ssl crypto)
