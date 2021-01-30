@@ -95,8 +95,11 @@ void AMQPExchange::checkType() {
 	if ( type == "topic" )
 		isErr = 0;
 
+	if ( type == "x-lvc" )
+		isErr = 0;
+
 	if (isErr)
-		throw AMQPException("the type of AMQPExchange must be direct | fanout | topic" );
+		throw AMQPException("the type of AMQPExchange must be direct | fanout | topic | x-lvc" );
 }
 
 // Delete
