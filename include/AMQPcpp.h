@@ -171,7 +171,7 @@ class AMQPQueue : public AMQPBase  {
 #else
 		std::map< AMQPEvents_e, int(*)( AMQPMessage * ) > events;
 #endif
-		amqp_bytes_t consumer_tag;
+		std::string consumer_tag;
 		uint32_t delivery_tag;
 		uint32_t count;
 	public:
@@ -213,7 +213,7 @@ class AMQPQueue : public AMQPBase  {
 		}
 
 		void setConsumerTag(std::string consumer_tag);
-		amqp_bytes_t getConsumerTag();
+		std::string getConsumerTag();
 
 		void addEvent( AMQPEvents_e eventType, int (*event)(AMQPMessage*) );
 #if __cplusplus > 199711L // C++11 or greater
