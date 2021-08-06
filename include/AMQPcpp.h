@@ -18,6 +18,8 @@
 
 #define AMQPDEBUG ":5673"
 
+#define AMQPHEARTBEAT 60
+
 #define AMQP_AUTODELETE		1
 #define AMQP_DURABLE		2
 #define AMQP_PASSIVE		4
@@ -283,7 +285,7 @@ class AMQPExchange : public AMQPBase {
 class AMQP {
 	public:
 		AMQP();
-		AMQP(std::string cnnStr, bool use_ssl_=false,
+		AMQP(std::string cnnStr, int hb = 60, bool use_ssl_=false,
 				std::string cacert_path_="", std::string client_cert_path_="", std::string client_key_path_="",
 				bool verify_peer_=false, bool verify_hostname_=false);
 		~AMQP();
@@ -308,8 +310,7 @@ class AMQP {
 		void sockConnect();
 		void login();
 
-
-
+		int heart_beat;
 		int port;
 		std::string host;
 		std::string vhost;

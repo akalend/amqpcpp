@@ -23,7 +23,7 @@ void publish() {
         std::stringstream ss;
         ss << "guest:guest@localhost:" << ports[rand() % 3];
 
-        AMQP amqp(ss.str());
+        AMQP amqp(ss.str(), 60);
 
         AMQPExchange * ex = amqp.createExchange("hello-exchange");
         ex->Declare("hello-exchange", "direct");
