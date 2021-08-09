@@ -31,6 +31,11 @@ add_library(
 )
 target_include_directories(amqpcpp-static PUBLIC include/)
 
+if(MSVC)
+    target_compile_options(amqpcpp PUBLIC "/Zc:__cplusplus")
+    target_compile_options(amqpcpp-static PUBLIC "/Zc:__cplusplus")
+endif()
+
 add_subdirectory(rabbitmq-c)
 target_include_directories(rabbitmq PUBLIC rabbitmq-c/librabbitmq/)
 
