@@ -5,6 +5,8 @@ project(amqpcpp)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+option(ENABLE_SSL_SUPPORT "Enable SSL support" ON)
+
 add_library(
     amqpcpp
     SHARED
@@ -31,8 +33,22 @@ add_library(
 )
 target_include_directories(amqpcpp-static PUBLIC include/)
 
+if (NOT ENABLE_SSL_SUPPORT)
+    add_definitions(-DAMQP_NO_SSL)
+endif()
+
+if(MSVC)
+    target_compile_options(amqpcpp PUBLIC "/Zc:__cplusplus")
+    target_compile_options(amqpcpp-static PUBLIC "/Zc:__cplusplus")
+endif()
+
 add_subdirectory(rabbitmq-c)
 target_include_directories(rabbitmq PUBLIC rabbitmq-c/librabbitmq/)
 
-target_link_libraries(amqpcpp rabbitmq ssl crypto)
-target_link_libraries(amqpcpp-static rabbitmq ssl crypto)
+if (ENABLE_SSL_SUPPORT)
+    target_link_libraries(amqpcpp rabbitmq ssl crypto)
+    target_link_libraries(amqpcpp-static rabbitmq ssl crypto)
+else()
+    target_link_libraries(amqpcpp rabbitmq)
+    target_link_libraries(amqpcpp-static rabbitmq)
+endif()
