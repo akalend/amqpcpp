@@ -84,7 +84,7 @@ void AMQP::parseCnnString( string cnnString ) {
 
 	// find '@' if Ok -> right part is host:port else all host:port
 	string hostPortStr, userPswString;
-	string::size_type pos = cnnString.find('@');
+	string::size_type pos = cnnString.find_last_of('@');
 
 	if (0 == pos) {
 		hostPortStr.assign(cnnString, 1, string::npos);
