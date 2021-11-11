@@ -44,7 +44,9 @@
 #include "amqp.h"
 #include "amqp_framing.h"
 #include "amqp_tcp_socket.h"
+#ifdef WITH_SSL
 #include "amqp_ssl_socket.h"
+#endif
 
 #include <iostream>
 #include <vector>
