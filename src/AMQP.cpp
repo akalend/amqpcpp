@@ -179,6 +179,7 @@ void AMQP::sockConnect() {
 
 	switch(proto) {
 		case AMQPS_proto: {
+#ifdef WITH_SSL
 			sockfd = amqp_ssl_socket_new(cnn);
 
 			status = amqp_ssl_socket_set_cacert(sockfd, cacert_path.c_str());
@@ -196,6 +197,9 @@ void AMQP::sockConnect() {
 #else
 			amqp_ssl_socket_set_verify_peer(sockfd, verify_peer ? 1 : 0);
 			amqp_ssl_socket_set_verify_hostname(sockfd, verify_hostname ? 1 : 0);
+#endif
+#else
+			throw AMQPException("AMQP cannot open SSL connection (compiled without SSL support)");
 #endif
 		}
 		break;
