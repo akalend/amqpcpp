@@ -16,7 +16,7 @@ AMQP::AMQP() {
 	AMQP::init(proto);
 	AMQP::initDefault(proto);
 	AMQP::connect();
-};
+}
 
 AMQP::AMQP(string cnnStr, bool use_ssl_,
 		string cacert_path_, string client_cert_path_, string client_key_path_,
@@ -32,7 +32,7 @@ AMQP::AMQP(string cnnStr, bool use_ssl_,
 	AMQP::init(proto);
 	AMQP::parseCnnString(cnnStr);
 	AMQP::connect(heartbeat);
-};
+}
 
 AMQP::~AMQP() {
 	if (channels.size()) {
@@ -44,7 +44,7 @@ AMQP::~AMQP() {
 
 	amqp_connection_close(cnn, AMQP_REPLY_SUCCESS);
 	amqp_destroy_connection(cnn);
-};
+}
 
 void AMQP::init(enum AMQPProto_e proto) {
 	switch(proto) {
