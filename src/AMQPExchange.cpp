@@ -299,7 +299,20 @@ void AMQPExchange::sendPublishCommand(amqp_bytes_t messageByte, const char * key
 	free(entries);
 
 	if ( 0 > res ) {
-		throw AMQPException("AMQP Publish Fail." );
+		const std::string errorMessage = [res]() -> std::string {
+			switch (res) {
+			case AMQP_STATUS_TIMER_FAILURE:     return "The underlying system timer facility failed";
+			case AMQP_STATUS_HEARTBEAT_TIMEOUT: return "Timed out waiting for heartbeat";
+			case AMQP_STATUS_NO_MEMORY:         return "Memory allocation failed";
+			case AMQP_STATUS_TABLE_TOO_BIG:     return "The amqp_table_t object cannot be serialized because the output buffer is too small";
+			case AMQP_STATUS_CONNECTION_CLOSED: return "The connection to the broker has been closed";
+			case AMQP_STATUS_SSL_ERROR:         return "A generic SSL error occurred";
+			case AMQP_STATUS_TCP_ERROR:         return "A generic TCP error occurred";
+			default:                            return "Unknown error (" + std::to_string(res) + ")";
+			}
+		}();
+
+		throw AMQPException("AMQP Publish Fail: " + errorMessage);
 	}
 }
 
