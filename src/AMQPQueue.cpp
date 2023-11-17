@@ -61,6 +61,14 @@ amqp_table_entry_t amqp_table_construct_utf8_entry(const char *key, const char *
 	return ret;
 }
 
+amqp_table_entry_t amqp_table_construct_int32_entry(const char* key, int32_t value) {
+	amqp_table_entry_t ret;
+	ret.key = amqp_cstring_bytes(key);
+	ret.value.kind = AMQP_FIELD_KIND_I32;
+	ret.value.value.i32 = value;
+	return ret;
+}
+
 void AMQPQueue::sendDeclareCommand(const std::vector<KeyValuePair>& arguments) {
 	amqp_bytes_t queue_name = amqp_cstring_bytes(name.c_str());
 
@@ -78,8 +86,14 @@ void AMQPQueue::sendDeclareCommand(const std::vector<KeyValuePair>& arguments) {
 	}
 	else {
 		const auto toTableEntry = [](const KeyValuePair& kvp) {
-			return amqp_table_construct_utf8_entry(kvp.key.c_str(), kvp.value.c_str());
+			if (std::holds_alternative<std::string>(kvp.value)) {
+				return amqp_table_construct_utf8_entry(kvp.key.c_str(), std::get<std::string>(kvp.value).c_str());
+			}
+			else {
+				return amqp_table_construct_int32_entry(kvp.key.c_str(), std::get<int32_t>(kvp.value));
+			}
 		};
+
 		std::transform(arguments.begin(), arguments.end(), a.begin(), toTableEntry);
 		args.entries = &a[0];
 	}

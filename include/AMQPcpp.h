@@ -51,6 +51,7 @@
 #include <map>
 #include <memory>
 #include <exception>
+#include <variant>
 
 #if __cplusplus > 199711L || (defined(_MSC_VER) && _MSC_VER >= 1800) // C++11 or greater
 #include <functional>
@@ -181,7 +182,7 @@ class AMQPQueue : public AMQPBase  {
 		struct KeyValuePair
 		{
 			std::string key;
-			std::string value;
+			std::variant<std::string, int32_t> value;
 		};
 
 		void Declare();
